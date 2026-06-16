@@ -1,0 +1,75 @@
+{
+  "name": "opsnext-crm",
+  "version": "1.0.0",
+  "description": "Production-ready multi-tenant SaaS CRM platform",
+  "setup_date": "2026-06-16",
+  "structure": {
+    "type": "monorepo",
+    "layout": "apps/web + apps/api",
+    "apps": {
+      "web": "apps/web",
+      "api": "apps/api"
+    },
+    "packages": {
+      "shared": "packages/shared"
+    }
+  },
+  "stack": {
+    "frontend": {
+      "framework": "Next.js",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "data_fetching": "TanStack Query",
+      "forms": "React Hook Form"
+    },
+    "backend": {
+      "framework": "NestJS",
+      "language": "TypeScript",
+      "orm": "Prisma",
+      "database": "PostgreSQL",
+      "cache": "Redis"
+    },
+    "infrastructure": {
+      "containers": "Docker + Docker Compose",
+      "ci": "GitHub Actions"
+    },
+    "testing": {
+      "unit": "Jest",
+      "e2e": "Playwright"
+    }
+  },
+  "package_manager": "pnpm",
+  "coverage_threshold": 70,
+  "external_ai_tools": [],
+  "modules": [
+    "user-roles-permissions",
+    "contact-account-management",
+    "lead-management",
+    "opportunity-pipeline",
+    "activity-task-management",
+    "email-communication",
+    "reporting-dashboards"
+  ],
+  "current_phase": "setup",
+  "phases": [
+    "product-discovery",
+    "domain-modeling",
+    "architecture-design",
+    "delivery-planning",
+    "implementation"
+  ],
+  "metaswarm": {
+    "version": "marketplace",
+    "agents_enabled": [
+      "architect-agent",
+      "coder-agent",
+      "security-auditor-agent",
+      "test-automator-agent",
+      "code-review-agent",
+      "product-manager-agent",
+      "designer-agent"
+    ],
+    "review_gate": true,
+    "adversarial_review": true
+  }
+}
