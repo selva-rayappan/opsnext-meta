@@ -30,6 +30,9 @@ const bull_1 = require("@nestjs/bull");
 const activities_module_1 = require("./activities/activities.module");
 const tasks_module_1 = require("./tasks/tasks.module");
 const reports_module_1 = require("./reports/reports.module");
+const email_integrations_module_1 = require("./email-integrations/email-integrations.module");
+const email_templates_module_1 = require("./email-templates/email-templates.module");
+const emails_module_1 = require("./emails/emails.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -80,6 +83,9 @@ exports.AppModule = AppModule = __decorate([
             activities_module_1.ActivitiesModule,
             tasks_module_1.TasksModule,
             reports_module_1.ReportsModule,
+            email_integrations_module_1.EmailIntegrationsModule,
+            email_templates_module_1.EmailTemplatesModule,
+            emails_module_1.EmailsModule,
         ],
         providers: [
             {

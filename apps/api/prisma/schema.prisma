@@ -66,6 +66,16 @@ enum TaskStatus {
   CANCELLED
 }
 
+enum EmailDirection {
+  OUTBOUND
+  INBOUND
+}
+
+enum EmailTrackingType {
+  OPEN
+  CLICK
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // EP-01: Identity & Access
 // ─────────────────────────────────────────────────────────────────────────────
@@ -96,6 +106,10 @@ model Organization {
   tasks               Task[]
   // EP-07
   savedReports        SavedReport[]
+  // EP-06
+  emailIntegration    EmailIntegration?
+  emailTemplates      EmailTemplate[]
+  emailThreads        EmailThread[]
 }
 
 model User {
@@ -130,6 +144,9 @@ model User {
   createdTasks   Task[]          @relation("TaskCreator")
   // EP-07
   savedReports   SavedReport[]   @relation("SavedReportCreator")
+  // EP-06
+  emailTemplates EmailTemplate[] @relation("EmailTemplateCreator")
+  emailThreads   EmailThread[]   @relation("EmailThreadCreator")
 
   @@unique([organizationId, email])
   @@index([organizationId])
@@ -242,6 +259,8 @@ model Contact {
   opportunities     Opportunity[]
   activities        Activity[]
   tasks             Task[]
+  // EP-06
+  emailThreads      EmailThread[]
 
   @@unique([organizationId, email])
   @@index([organizationId])
@@ -464,6 +483,8 @@ model Opportunity {
   stageHistory   StageHistory[]
   activities     Activity[]
   tasks          Task[]
+  // EP-06
+  emailThreads   EmailThread[]
 
   @@index([organizationId])
   @@index([organizationId, status])
@@ -579,4 +600,113 @@ model SavedReport {
 
   @@index([organizationId])
   @@index([createdById])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EP-06: Email & Communication History
+// ─────────────────────────────────────────────────────────────────────────────
+
+model EmailIntegration {
+  id             String    @id @default(uuid())
+  organizationId String    @unique
+  smtpHost       String
+  smtpPort       Int       @default(587)
+  smtpUser       String
+  smtpPassEnc    String
+  smtpFromName   String
+  smtpFromEmail  String
+  smtpSecure     Boolean   @default(false)
+  imapEnabled    Boolean   @default(false)
+  imapHost       String?
+  imapPort       Int       @default(993)
+  imapUser       String?
+  imapPassEnc    String?
+  isActive       Boolean   @default(true)
+  lastSyncAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+}
+
+model EmailTemplate {
+  id             String    @id @default(uuid())
+  organizationId String
+  name           String
+  subject        String
+  bodyHtml       String
+  isShared       Boolean   @default(true)
+  createdById    String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy      User         @relation("EmailTemplateCreator", fields: [createdById], references: [id])
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model EmailThread {
+  id             String    @id @default(uuid())
+  organizationId String
+  subject        String
+  contactId      String?
+  opportunityId  String?
+  createdById    String
+  lastMessageAt  DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact        Contact?      @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  opportunity    Opportunity?  @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+  createdBy      User          @relation("EmailThreadCreator", fields: [createdById], references: [id])
+  messages       EmailMessage[]
+
+  @@index([organizationId])
+  @@index([contactId])
+  @@index([opportunityId])
+  @@index([organizationId, lastMessageAt])
+}
+
+model EmailMessage {
+  id             String         @id @default(uuid())
+  organizationId String
+  threadId       String
+  messageId      String?
+  direction      EmailDirection
+  fromAddress    String
+  toAddresses    String[]
+  ccAddresses    String[]       @default([])
+  subject        String
+  bodyHtml       String
+  bodyText       String?
+  sentAt         DateTime?
+  openCount      Int            @default(0)
+  clickCount     Int            @default(0)
+  createdAt      DateTime       @default(now())
+
+  thread         EmailThread          @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  trackingEvents EmailTrackingEvent[]
+
+  @@index([threadId])
+  @@index([organizationId])
+  @@index([messageId])
+}
+
+model EmailTrackingEvent {
+  id         String            @id @default(uuid())
+  messageId  String
+  type       EmailTrackingType
+  url        String?
+  ipAddress  String?
+  userAgent  String?
+  occurredAt DateTime          @default(now())
+
+  message    EmailMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
 }

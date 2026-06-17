@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import ActivityTimeline from '@/components/activity-timeline';
+import EmailComposeModal from '@/components/email/EmailComposeModal';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -18,6 +19,9 @@ import {
   Plus,
   Building2,
   Clock,
+  ArrowUpRight,
+  ArrowDownLeft,
+  MessageSquare,
 } from 'lucide-react';
 import {
   getContact,
@@ -28,7 +32,8 @@ import {
 } from '@/lib/contacts-api';
 import { getAccounts } from '@/lib/accounts-api';
 import { getTags } from '@/lib/tags-api';
-import type { Contact, Tag } from '@/lib/types';
+import { getEmailThreads, getEmailThread } from '@/lib/email-api';
+import type { Contact, Tag, EmailThread, EmailMessage } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -486,12 +491,283 @@ function AddTagDropdown({
 }
 
 // ---------------------------------------------------------------------------
+// Helpers for email tab
+// ---------------------------------------------------------------------------
+function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Thread detail panel — shows messages inside a selected thread
+// ---------------------------------------------------------------------------
+function ThreadDetailPanel({
+  threadId,
+  onClose,
+  contactId,
+}: {
+  threadId: string;
+  onClose: () => void;
+  contactId: string;
+}) {
+  const [showReply, setShowReply] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: thread, isLoading } = useQuery({
+    queryKey: ['email-thread', threadId],
+    queryFn: () => getEmailThread(threadId),
+    enabled: Boolean(threadId),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-3 p-4">
+        {[1, 2].map((i) => (
+          <div key={i} className="h-24 animate-pulse rounded-lg bg-slate-200" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!thread) return null;
+
+  return (
+    <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-slate-900">{thread.subject}</p>
+          <p className="text-xs text-slate-400">
+            {(thread.messages ?? []).length} message{(thread.messages ?? []).length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            size="sm"
+            leftIcon={<Mail />}
+            onClick={() => setShowReply(true)}
+          >
+            Reply
+          </Button>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            aria-label="Close thread"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 space-y-3 overflow-y-auto p-4">
+        {(thread.messages ?? []).length === 0 ? (
+          <p className="text-sm text-slate-400">No messages in this thread.</p>
+        ) : (
+          (thread.messages ?? []).map((msg: EmailMessage) => (
+            <div
+              key={msg.id}
+              className={cn(
+                'rounded-lg border p-4',
+                msg.direction === 'OUTBOUND'
+                  ? 'border-blue-100 bg-blue-50'
+                  : 'border-slate-200 bg-white',
+              )}
+            >
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  {msg.direction === 'OUTBOUND' ? (
+                    <ArrowUpRight className="h-3.5 w-3.5 text-blue-500 shrink-0" aria-label="Outbound" />
+                  ) : (
+                    <ArrowDownLeft className="h-3.5 w-3.5 text-slate-500 shrink-0" aria-label="Inbound" />
+                  )}
+                  <span className="text-xs font-medium text-slate-700">{msg.fromAddress}</span>
+                  {msg.toAddresses.length > 0 && (
+                    <span className="text-xs text-slate-400">
+                      → {msg.toAddresses.join(', ')}
+                    </span>
+                  )}
+                </div>
+                <span className="shrink-0 text-xs text-slate-400">
+                  {formatDateTime(msg.sentAt ?? msg.createdAt)}
+                </span>
+              </div>
+
+              {/* Email body rendered as HTML */}
+              <div
+                className="prose prose-sm max-w-none text-slate-700"
+                // Acceptable: content comes from our own CRM API
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: msg.bodyHtml }}
+              />
+
+              {/* Outbound tracking stats */}
+              {msg.direction === 'OUTBOUND' && (msg.openCount > 0 || msg.clickCount > 0) && (
+                <div className="mt-2 flex items-center gap-3 border-t border-blue-200 pt-2">
+                  {msg.openCount > 0 && (
+                    <span className="text-xs text-slate-500">
+                      {msg.openCount} open{msg.openCount !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                  {msg.clickCount > 0 && (
+                    <span className="text-xs text-slate-500">
+                      {msg.clickCount} click{msg.clickCount !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {showReply && (
+        <EmailComposeModal
+          isOpen={showReply}
+          onClose={() => setShowReply(false)}
+          mode="reply"
+          threadId={threadId}
+          threadSubject={thread.subject}
+          contactId={contactId}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ['email-thread', threadId] });
+            setShowReply(false);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Email tab content
+// ---------------------------------------------------------------------------
+function EmailTab({
+  contactId,
+  contactEmail,
+}: {
+  contactId: string;
+  contactEmail?: string;
+}) {
+  const [showCompose, setShowCompose] = useState(false);
+  const [openThreadId, setOpenThreadId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data: threads = [], isLoading } = useQuery({
+    queryKey: ['email-threads', 'contact', contactId],
+    queryFn: () => getEmailThreads({ contactId }),
+    enabled: Boolean(contactId),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-14 animate-pulse rounded-lg bg-slate-200" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-slate-900">Email Threads</h2>
+        <Button size="sm" leftIcon={<Mail />} onClick={() => setShowCompose(true)}>
+          Compose Email
+        </Button>
+      </div>
+
+      {/* Thread list */}
+      {threads.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 py-12 text-center">
+          <MessageSquare className="h-8 w-8 text-slate-300" aria-hidden="true" />
+          <p className="text-sm text-slate-400">No email threads yet.</p>
+          <Button size="sm" leftIcon={<Mail />} onClick={() => setShowCompose(true)}>
+            Send First Email
+          </Button>
+        </div>
+      ) : (
+        <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-sm">
+          {threads.map((thread: EmailThread) => (
+            <li key={thread.id}>
+              <button
+                className={cn(
+                  'flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition-colors',
+                  openThreadId === thread.id ? 'bg-primary-50' : 'hover:bg-slate-50',
+                )}
+                onClick={() =>
+                  setOpenThreadId(openThreadId === thread.id ? null : thread.id)
+                }
+              >
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={cn(
+                      'truncate text-sm font-medium',
+                      openThreadId === thread.id ? 'text-primary-700' : 'text-slate-900',
+                    )}
+                  >
+                    {thread.subject}
+                  </p>
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    {(thread.messages ?? []).length > 0
+                      ? `${thread.messages!.length} message${thread.messages!.length !== 1 ? 's' : ''}`
+                      : 'No messages'}
+                  </p>
+                </div>
+                <span className="shrink-0 text-xs text-slate-400">
+                  {formatDateTime(thread.lastMessageAt)}
+                </span>
+              </button>
+
+              {openThreadId === thread.id && (
+                <div className="border-t border-slate-100 p-3">
+                  <ThreadDetailPanel
+                    threadId={thread.id}
+                    contactId={contactId}
+                    onClose={() => setOpenThreadId(null)}
+                  />
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Compose modal */}
+      {showCompose && (
+        <EmailComposeModal
+          isOpen={showCompose}
+          onClose={() => setShowCompose(false)}
+          mode="compose"
+          contactId={contactId}
+          contactEmail={contactEmail}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ['email-threads', 'contact', contactId] });
+            setShowCompose(false);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
+type ContactTab = 'overview' | 'email';
+
 export default function ContactDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [showEdit, setShowEdit] = useState(false);
   const [showLinkAccount, setShowLinkAccount] = useState(false);
+  const [activeTab, setActiveTab] = useState<ContactTab>('overview');
   const queryClient = useQueryClient();
 
   const { data: contact, isLoading, isError } = useQuery({
@@ -610,7 +886,31 @@ export default function ContactDetailPage() {
           </Button>
         </div>
 
-        {/* Two-column layout */}
+        {/* Tabs */}
+        <div className="mb-6 flex gap-1 border-b border-slate-200">
+          {(['overview', 'email'] as ContactTab[]).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                'px-4 py-2.5 text-sm font-medium capitalize transition-colors',
+                activeTab === tab
+                  ? 'border-b-2 border-primary-600 text-primary-700'
+                  : 'text-slate-500 hover:text-slate-700',
+              )}
+            >
+              {tab === 'overview' ? 'Overview' : 'Email'}
+            </button>
+          ))}
+        </div>
+
+        {/* Email tab */}
+        {activeTab === 'email' && (
+          <EmailTab contactId={id} contactEmail={contact.email} />
+        )}
+
+        {/* Overview tab — Two-column layout */}
+        {activeTab === 'overview' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left column (2/3) */}
           <div className="space-y-6 lg:col-span-2">
@@ -730,6 +1030,7 @@ export default function ContactDetailPage() {
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* Modals */}

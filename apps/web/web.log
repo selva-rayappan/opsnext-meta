@@ -42,3 +42,14 @@ No projects matched the filters "c:\Users\selvakumar.rayappan\Documents\opsnext-
  ✓ Compiled in 974ms (1029 modules)
  ✓ Compiled in 349ms (1029 modules)
  ✓ Compiled in 259ms (481 modules)
+ GET /dashboard 200 in 440ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 3.5s (1046 modules)
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1728ms (1048 modules)
+ ○ Compiling /activities ...
+ ✓ Compiled /activities in 798ms (567 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1929ms (1030 modules)
+ GET /email 404 in 406ms
+ GET /dashboard 200 in 116ms

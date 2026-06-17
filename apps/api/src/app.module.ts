@@ -26,6 +26,9 @@ import { BullModule } from '@nestjs/bull';
 import { ActivitiesModule } from './activities/activities.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ReportsModule } from './reports/reports.module';
+import { EmailIntegrationsModule } from './email-integrations/email-integrations.module';
+import { EmailTemplatesModule } from './email-templates/email-templates.module';
+import { EmailsModule } from './emails/emails.module';
 
 @Module({
   imports: [
@@ -88,6 +91,11 @@ import { ReportsModule } from './reports/reports.module';
 
     // EP-07: Reporting & Dashboards
     ReportsModule,
+
+    // EP-06: Email & Communication History
+    EmailIntegrationsModule,
+    EmailTemplatesModule,
+    EmailsModule,
   ],
   providers: [
     // Apply rate-limiting guard globally

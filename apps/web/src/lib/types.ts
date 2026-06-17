@@ -384,3 +384,69 @@ export interface SavedReport {
   createdBy?: { id: string; firstName: string; lastName: string };
 }
 
+// ---------------------------------------------------------------------------
+// EP-06: Email & Communication History
+// ---------------------------------------------------------------------------
+
+export interface EmailIntegration {
+  id: string;
+  organizationId: string;
+  smtpHost: string;
+  smtpPort: number;
+  smtpUser: string;
+  smtpFromName: string;
+  smtpFromEmail: string;
+  smtpSecure: boolean;
+  imapEnabled: boolean;
+  imapHost?: string;
+  imapPort?: number;
+  imapUser?: string;
+  isActive: boolean;
+  lastSyncAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EmailTemplate {
+  id: string;
+  organizationId: string;
+  name: string;
+  subject: string;
+  bodyHtml: string;
+  isShared: boolean;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EmailMessage {
+  id: string;
+  organizationId: string;
+  threadId: string;
+  messageId?: string;
+  direction: 'OUTBOUND' | 'INBOUND';
+  fromAddress: string;
+  toAddresses: string[];
+  ccAddresses: string[];
+  subject: string;
+  bodyHtml: string;
+  bodyText?: string;
+  sentAt?: string;
+  openCount: number;
+  clickCount: number;
+  createdAt: string;
+}
+
+export interface EmailThread {
+  id: string;
+  organizationId: string;
+  subject: string;
+  contactId?: string;
+  opportunityId?: string;
+  createdById: string;
+  lastMessageAt: string;
+  createdAt: string;
+  updatedAt: string;
+  messages?: EmailMessage[];
+}
+

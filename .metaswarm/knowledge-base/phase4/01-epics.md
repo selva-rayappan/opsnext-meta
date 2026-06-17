@@ -20,7 +20,7 @@
 | EP-03 | Lead Management | FR-LEAD | ✅ Complete | Sprint 5 |
 | EP-04 | Opportunity & Pipeline Tracking | FR-OPP | ✅ Complete | Sprint 6 |
 | EP-05 | Activity & Task Management | FR-ACTIVITY | ✅ Complete | Sprint 7 |
-| EP-06 | Email & Communication History | FR-EMAIL | 🔲 Planned | Sprint 7–8 |
+| EP-06 | Email & Communication History | FR-EMAIL | ✅ Complete | Sprint 7–8 |
 | EP-07 | Reporting & Dashboards | FR-REPORT | ✅ Complete | Sprint 8 |
 
 ---
@@ -153,22 +153,24 @@
 
 ---
 
-## EP-06: Email & Communication History
+## EP-06: Email & Communication History ✅
 
 **Goal:** Log emails sent from the CRM, sync received replies via IMAP, track opens/clicks.
 
+**Status:** Complete — 2026-06-17
+
 **Done criteria:**
-- [ ] SMTP integration configuration (per org — their own email server)
-- [ ] Send email from Contact / Opportunity detail page (creates EmailThread + EmailMessage)
-- [ ] IMAP sync (poll for replies, match to existing threads by Message-ID)
-- [ ] Email open and click tracking (pixel + link rewrite)
-- [ ] Email templates (create, manage, use when composing)
-- [ ] Sent email creates EMAIL_LOG Activity automatically (domain event)
-- [ ] Received reply creates EMAIL_LOG Activity automatically
-- [ ] BullMQ queue for IMAP sync (runs every 5 minutes per active integration)
-- [ ] Next.js: Email compose modal (select template, to/cc, subject, body)
-- [ ] Next.js: Thread view on Contact detail timeline
-- [ ] Next.js: Email template manager
+- [x] SMTP integration configuration (per org — their own email server) — `EmailIntegration` model, AES-256-GCM encrypted passwords, `PUT /email-integrations` upsert
+- [x] Send email from Contact / Opportunity detail page — `POST /emails/threads` creates EmailThread + EmailMessage, sends via nodemailer
+- [x] IMAP sync (poll for replies, match to existing threads by Message-ID) — `EmailSyncProcessor` with imapflow + mailparser
+- [x] Email open and click tracking (pixel + link rewrite) — `GET /emails/track/open/:id` 1x1 GIF, `GET /emails/track/click/:id/:url` redirect; links rewritten in bodyHtml at send time
+- [x] Email templates (create, manage, use when composing) — `EmailTemplate` model, full CRUD, template selector in compose modal
+- [x] Sent email creates EMAIL_LOG Activity automatically
+- [x] Received reply creates EMAIL_LOG Activity automatically (in IMAP sync processor)
+- [x] BullMQ queue for IMAP sync (runs every 5 minutes — `EmailSyncSchedulerService`)
+- [x] Next.js: Email compose modal — `EmailComposeModal` component with template selector, chip inputs for To/CC, reply mode
+- [x] Next.js: Thread view on Contact detail timeline — "Email" tab on contact detail page with thread list + thread detail panel + inline reply
+- [x] Next.js: Email template manager — two-panel settings page at `/settings/email-templates`
 
 **Key metrics:**
 - IMAP sync latency: email appears in CRM within 10 minutes of receipt

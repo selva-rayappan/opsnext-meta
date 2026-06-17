@@ -34,6 +34,8 @@ const NAV_ITEMS = [
   { label: 'Email', href: '/email', icon: Mail },
   { label: 'Reports', href: '/reports', icon: BarChart2 },
   { label: 'Settings', href: '/settings/users', icon: Settings },
+  { label: 'Email Integration', href: '/settings/email', icon: Settings },
+  { label: 'Email Templates', href: '/settings/email-templates', icon: Settings },
 ] as const;
 
 // ---------------------------------------------------------------------------
