@@ -1,7 +1,8 @@
 {
-  "/(auth)/register/page": "app/(auth)/register/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
   "/(dashboard)/contacts/page": "app/(dashboard)/contacts/page.js",
-  "/(dashboard)/accounts/page": "app/(dashboard)/accounts/page.js"
+  "/(dashboard)/accounts/page": "app/(dashboard)/accounts/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js",
+  "/(dashboard)/leads/page": "app/(dashboard)/leads/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js"
 }
