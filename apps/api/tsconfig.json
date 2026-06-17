@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
-    "incremental": true,
+    "incremental": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
@@ -23,7 +23,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "paths": {
-      "@opsnext/shared": ["../../packages/shared/src/index.ts"]
+      "@opsnext/shared": ["../../packages/shared/dist/index"]
     }
   },
   "include": ["src/**/*"],

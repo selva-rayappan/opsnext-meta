@@ -27,18 +27,18 @@ export interface GetContactsParams {
 export async function getContacts(
   params: GetContactsParams = {},
 ): Promise<PaginatedResponse<Contact>> {
-  const { page = 1, limit = 25, q = '', isActive, ownerId = '', tagId = '', sortBy = 'createdAt', order = 'desc' } = params;
+  const { page = 1, limit = 25, q = '', isActive, ownerId, tagId, sortBy = 'createdAt', order = 'desc' } = params;
 
   const query = new URLSearchParams({
     page: String(page),
     limit: String(limit),
-    q,
-    ownerId,
-    tagId,
     sortBy,
     order,
   });
 
+  if (q) query.set('q', q);
+  if (ownerId) query.set('ownerId', ownerId);
+  if (tagId) query.set('tagId', tagId);
   if (isActive !== '' && isActive !== undefined) {
     query.set('isActive', String(isActive));
   }

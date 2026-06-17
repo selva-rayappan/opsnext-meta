@@ -28,9 +28,9 @@ export async function getAccounts(
   const {
     page = 1,
     limit = 25,
-    q = '',
+    q,
     isActive,
-    ownerId = '',
+    ownerId,
     sortBy = 'createdAt',
     order = 'desc',
   } = params;
@@ -38,12 +38,12 @@ export async function getAccounts(
   const query = new URLSearchParams({
     page: String(page),
     limit: String(limit),
-    q,
-    ownerId,
     sortBy,
     order,
   });
 
+  if (q) query.set('q', q);
+  if (ownerId) query.set('ownerId', ownerId);
   if (isActive !== '' && isActive !== undefined) {
     query.set('isActive', String(isActive));
   }

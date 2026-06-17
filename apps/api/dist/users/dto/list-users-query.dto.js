@@ -23,7 +23,7 @@ class ListUsersQueryDto {
         this.order = 'desc';
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { page: { required: true, type: () => Number, default: 1, minimum: 1 }, limit: { required: true, type: () => Number, default: 20, minimum: 1, maximum: 100 }, isActive: { required: false, type: () => Boolean }, role: { required: false, enum: require("../../../../../packages/shared/src/types/user.types").Role }, sortBy: { required: true, type: () => Object, default: "createdAt", enum: ['createdAt', 'lastName', 'lastLoginAt'] }, order: { required: true, type: () => Object, default: "desc", enum: ['asc', 'desc'] } };
+        return { page: { required: true, type: () => Number, default: 1, minimum: 1 }, limit: { required: true, type: () => Number, default: 20, minimum: 1, maximum: 100 }, isActive: { required: false, type: () => Boolean }, role: { required: false, enum: require("../../../../../packages/shared/dist/types/user.types").Role }, sortBy: { required: true, type: () => Object, default: "createdAt", enum: ['createdAt', 'lastName', 'lastLoginAt'] }, order: { required: true, type: () => Object, default: "desc", enum: ['asc', 'desc'] } };
     }
 }
 exports.ListUsersQueryDto = ListUsersQueryDto;

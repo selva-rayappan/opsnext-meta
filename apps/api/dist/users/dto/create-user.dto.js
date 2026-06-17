@@ -19,7 +19,7 @@ class CreateUserDto {
         this.role = shared_1.Role.SALES_REP;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { firstName: { required: true, type: () => String, maxLength: 100 }, lastName: { required: true, type: () => String, maxLength: 100 }, email: { required: true, type: () => String, maxLength: 255 }, role: { required: true, default: shared_1.Role.SALES_REP, enum: require("../../../../../packages/shared/src/types/user.types").Role }, password: { required: true, type: () => String, minLength: 8, maxLength: 128, pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?])/" } };
+        return { firstName: { required: true, type: () => String, maxLength: 100 }, lastName: { required: true, type: () => String, maxLength: 100 }, email: { required: true, type: () => String, maxLength: 255 }, role: { required: true, default: shared_1.Role.SALES_REP, enum: require("../../../../../packages/shared/dist/types/user.types").Role }, password: { required: true, type: () => String, minLength: 8, maxLength: 128, pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?])/" } };
     }
 }
 exports.CreateUserDto = CreateUserDto;

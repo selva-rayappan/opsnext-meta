@@ -19,7 +19,7 @@ class InviteUserDto {
         this.role = shared_1.Role.SALES_REP;
     }
     static _OPENAPI_METADATA_FACTORY() {
-        return { email: { required: true, type: () => String, maxLength: 255 }, role: { required: true, default: shared_1.Role.SALES_REP, enum: require("../../../../../packages/shared/src/types/user.types").Role } };
+        return { email: { required: true, type: () => String, maxLength: 255 }, role: { required: true, default: shared_1.Role.SALES_REP, enum: require("../../../../../packages/shared/dist/types/user.types").Role } };
     }
 }
 exports.InviteUserDto = InviteUserDto;

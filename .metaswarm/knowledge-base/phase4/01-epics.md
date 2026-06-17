@@ -16,8 +16,8 @@
 | # | Epic | FR Prefix | Status | Target Sprint |
 |---|---|---|---|---|
 | EP-01 | User Roles & Permissions | FR-AUTH | ✅ Complete | Sprint 1–2 |
-| EP-02 | Contact & Account Management | FR-CONTACT | 🔲 Next | Sprint 3–4 |
-| EP-03 | Lead Management | FR-LEAD | 🔲 Planned | Sprint 5 |
+| EP-02 | Contact & Account Management | FR-CONTACT | ✅ Complete | Sprint 3–4 |
+| EP-03 | Lead Management | FR-LEAD | 🔄 In Progress | Sprint 5 |
 | EP-04 | Opportunity & Pipeline Tracking | FR-OPP | 🔲 Planned | Sprint 6 |
 | EP-05 | Activity & Task Management | FR-ACTIVITY | 🔲 Planned | Sprint 7 |
 | EP-06 | Email & Communication History | FR-EMAIL | 🔲 Planned | Sprint 7–8 |
@@ -49,24 +49,26 @@
 
 ---
 
-## EP-02: Contact & Account Management
+## EP-02: Contact & Account Management ✅
 
 **Goal:** Master data for people (Contacts) and companies (Accounts) — the foundation all sales activity builds on.
 
+**Completed:** 2026-06-17
+
 **Done criteria:**
-- [ ] Contact CRUD (create, read, update, soft-delete)
-- [ ] Account CRUD
-- [ ] Contact ↔ Account linking (many-to-many with isPrimary flag)
-- [ ] Tag system (create tags, apply to contacts/accounts, filter by tag)
-- [ ] Custom fields (org admin defines fields; reps fill values)
-- [ ] Contact/Account search (name, email, company, fuzzy)
-- [ ] Bulk import via CSV (email, first_name, last_name, company required)
-- [ ] Duplicate detection on import (flagged, not blocked)
-- [ ] Contact merge (tombstone source, point all FKs to canonical)
-- [ ] Owner assignment (ADMIN assigns; Sales Rep can only see/edit own unless org-wide scope set)
-- [ ] Next.js: Contact list (paginated, filterable, sortable)
-- [ ] Next.js: Contact detail page (timeline of activities + linked opps)
-- [ ] Next.js: Account list + Account detail page
+- [x] Contact CRUD (create, read, update, soft-delete)
+- [x] Account CRUD
+- [x] Contact ↔ Account linking (many-to-many with isPrimary flag)
+- [x] Tag system (create tags, apply to contacts/accounts, filter by tag)
+- [x] Custom fields (org admin defines fields; reps fill values)
+- [x] Contact/Account search (name, email, company, fuzzy)
+- [x] Bulk import via CSV (email, first_name, last_name, company required)
+- [x] Duplicate detection on import (flagged, not blocked)
+- [x] Contact merge (tombstone source, point all FKs to canonical)
+- [x] Owner assignment (ADMIN assigns; Sales Rep can only see/edit own unless org-wide scope set)
+- [x] Next.js: Contact list (paginated, filterable, sortable)
+- [x] Next.js: Contact detail page (timeline of activities + linked opps)
+- [x] Next.js: Account list + Account detail page
 
 **Key metrics:**
 - Contact list renders ≤ 500ms (p95) with 10,000 contacts
@@ -75,9 +77,11 @@
 
 ---
 
-## EP-03: Lead Management
+## EP-03: Lead Management 🔄
 
 **Goal:** Capture, qualify, score, and convert inbound leads into Contacts and Opportunities.
+
+**Status:** In Progress — 2026-06-17
 
 **Done criteria:**
 - [ ] Lead CRUD (create, read, update, delete)
