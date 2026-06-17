@@ -78,7 +78,7 @@ export class UsersService {
 
     return withTenant(orgId, async () => {
       const [users, total] = await Promise.all([
-        this.tenantPrisma.findMany('user', {
+        this.tenantPrisma.findMany('User', {
           where,
           orderBy: { [sortBy]: order },
           skip: (page - 1) * limit,
@@ -94,8 +94,8 @@ export class UsersService {
             createdAt: true,
             updatedAt: true,
           },
-        }) as Promise<Record<string, unknown>[]>,
-        this.tenantPrisma.count('user', { where }) as Promise<number>,
+        }) as unknown as Promise<Record<string, unknown>[]>,
+        this.tenantPrisma.count('User', { where }) as unknown as Promise<number>,
       ]);
 
       return { data: await users, total: await total, page, limit };
@@ -107,7 +107,7 @@ export class UsersService {
    */
   async findById(userId: string, orgId: string): Promise<Record<string, unknown>> {
     return withTenant(orgId, async () => {
-      const user = (await (this.tenantPrisma.findFirst('user', {
+      const user = (await (this.tenantPrisma.findFirst('User', {
         where: { id: userId },
         select: {
           id: true,
@@ -121,7 +121,7 @@ export class UsersService {
           updatedAt: true,
           organizationId: true,
         },
-      }) as Promise<Record<string, unknown> | null>));
+      }) as unknown as Promise<Record<string, unknown> | null>));
 
       if (!user) {
         throw new NotFoundException(`User ${userId} not found`);
@@ -168,7 +168,7 @@ export class UsersService {
   async invite(orgId: string, dto: InviteUserDto, invitedById: string): Promise<void> {
     await withTenant(orgId, async () => {
       // Check for existing active user in this org
-      const existing = await (this.tenantPrisma.findFirst('user', {
+      const existing = await (this.tenantPrisma.findFirst('User', {
         where: { email: dto.email.toLowerCase() },
       }) as Promise<unknown>);
       if (existing) {
@@ -176,7 +176,7 @@ export class UsersService {
       }
 
       // Check for a pending (non-expired, non-accepted) invite
-      const existingInvite = await (this.tenantPrisma.findFirst('userInvite', {
+      const existingInvite = await (this.tenantPrisma.findFirst('UserInvite', {
         where: {
           email: dto.email.toLowerCase(),
           acceptedAt: null,

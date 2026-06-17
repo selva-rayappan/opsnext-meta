@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────────────────────
+
 enum OrganizationStatus {
   ACTIVE
   SUSPENDED
@@ -21,16 +25,75 @@ enum Role {
   READ_ONLY
 }
 
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  UNQUALIFIED
+  CONVERTED
+}
+
+enum OpportunityStatus {
+  OPEN
+  WON
+  LOST
+}
+
+enum StageType {
+  OPEN
+  WON
+  LOST
+}
+
+enum ActivityType {
+  CALL
+  MEETING
+  EMAIL_LOG
+  NOTE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EP-01: Identity & Access
+// ─────────────────────────────────────────────────────────────────────────────
+
 model Organization {
-  id        String             @id @default(uuid())
-  name      String
-  slug      String             @unique
-  status    OrganizationStatus @default(ACTIVE)
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  users     User[]
-  invites   UserInvite[]
-  auditLogs AuditLog[]
+  id                  String             @id @default(uuid())
+  name                String
+  slug                String             @unique
+  status              OrganizationStatus @default(ACTIVE)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  users               User[]
+  invites             UserInvite[]
+  auditLogs           AuditLog[]
+  // EP-02
+  contacts            Contact[]
+  accounts            Account[]
+  tags                Tag[]
+  customFields        CustomField[]
+  // EP-03
+  leads               Lead[]
+  // EP-04
+  pipelines           Pipeline[]
+  opportunities       Opportunity[]
+  // EP-05
+  activities          Activity[]
+  tasks               Task[]
 }
 
 model User {
@@ -45,11 +108,24 @@ model User {
   lastLoginAt    DateTime?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+
   organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   refreshTokens  RefreshToken[]
   sentInvites    UserInvite[]    @relation("InvitedBy")
   auditLogs      AuditLog[]      @relation("AuditActor")
   passwordResets PasswordReset[]
+  // EP-02 ownership
+  ownedContacts  Contact[]       @relation("ContactOwner")
+  ownedAccounts  Account[]       @relation("AccountOwner")
+  // EP-03
+  ownedLeads     Lead[]          @relation("LeadOwner")
+  // EP-04
+  ownedOpps      Opportunity[]   @relation("OpportunityOwner")
+  stageChanges   StageHistory[]
+  // EP-05
+  activities     Activity[]
+  assignedTasks  Task[]          @relation("TaskAssignee")
+  createdTasks   Task[]          @relation("TaskCreator")
 
   @@unique([organizationId, email])
   @@index([organizationId])
@@ -61,12 +137,13 @@ model RefreshToken {
   organizationId String    @map("organization_id")
   userId         String
   tokenHash      String    @unique
-  familyId       String    // for token family invalidation on reuse detection
+  familyId       String
   expiresAt      DateTime
   revokedAt      DateTime?
   ipAddress      String?
   userAgent      String?
   createdAt      DateTime  @default(now())
+
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -84,6 +161,7 @@ model UserInvite {
   acceptedAt     DateTime?
   invitedById    String
   createdAt      DateTime     @default(now())
+
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   invitedBy      User         @relation("InvitedBy", fields: [invitedById], references: [id])
 
@@ -99,6 +177,7 @@ model PasswordReset {
   expiresAt      DateTime
   usedAt         DateTime?
   createdAt      DateTime  @default(now())
+
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -118,6 +197,7 @@ model AuditLog {
   ipAddress      String?
   userAgent      String?
   timestamp      DateTime     @default(now())
+
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   actor          User?        @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
 
@@ -125,4 +205,352 @@ model AuditLog {
   @@index([organizationId, timestamp])
   @@index([actorId])
   @@index([entityType, entityId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EP-02: Contact & Account Management
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Contact {
+  id             String    @id @default(uuid())
+  organizationId String
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  title          String?
+  source         String?
+  ownerId        String?
+  isActive       Boolean   @default(true)
+  mergedIntoId   String?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  owner             User?                @relation("ContactOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  mergedInto        Contact?             @relation("ContactMerge", fields: [mergedIntoId], references: [id])
+  mergedContacts    Contact[]            @relation("ContactMerge")
+  accountLinks      ContactAccountLink[]
+  tags              ContactTag[]
+  // referenced by later epics (FK only — no cascade)
+  leads             Lead[]
+  opportunities     Opportunity[]
+  activities        Activity[]
+  tasks             Task[]
+
+  @@unique([organizationId, email])
+  @@index([organizationId])
+  @@index([organizationId, isActive])
+  @@index([organizationId, ownerId])
+  @@index([email])
+}
+
+model Account {
+  id              String    @id @default(uuid())
+  organizationId  String
+  name            String
+  domain          String?
+  industry        String?
+  employeeCount   Int?
+  website         String?
+  phone           String?
+  billingAddress  Json?
+  ownerId         String?
+  isActive        Boolean   @default(true)
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  owner             User?                @relation("AccountOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  contactLinks      ContactAccountLink[]
+  tags              AccountTag[]
+  // referenced by later epics
+  opportunities     Opportunity[]
+  activities        Activity[]
+  tasks             Task[]
+
+  @@index([organizationId])
+  @@index([organizationId, isActive])
+  @@index([organizationId, ownerId])
+}
+
+model ContactAccountLink {
+  id        String  @id @default(uuid())
+  contactId String
+  accountId String
+  title     String?
+  isPrimary Boolean @default(false)
+
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, accountId])
+  @@index([accountId])
+  @@index([contactId])
+}
+
+model Tag {
+  id             String    @id @default(uuid())
+  organizationId String
+  name           String
+  color          String    @default("#6B7280")
+  createdAt      DateTime  @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contactTags    ContactTag[]
+  accountTags    AccountTag[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model ContactTag {
+  contactId String
+  tagId     String
+
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([contactId, tagId])
+}
+
+model AccountTag {
+  accountId String
+  tagId     String
+
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([accountId, tagId])
+}
+
+model CustomField {
+  id             String    @id @default(uuid())
+  organizationId String
+  entityType     String    // 'Contact' | 'Account' | 'Lead' | 'Opportunity'
+  name           String
+  fieldType      String    // 'text' | 'number' | 'date' | 'boolean' | 'select' | 'multiselect'
+  isRequired     Boolean   @default(false)
+  options        Json?
+  order          Int       @default(0)
+  createdAt      DateTime  @default(now())
+
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  values         CustomFieldValue[]
+
+  @@unique([organizationId, entityType, name])
+  @@index([organizationId, entityType])
+}
+
+model CustomFieldValue {
+  id         String   @id @default(uuid())
+  fieldId    String
+  entityType String   // 'Contact' | 'Account' | 'Lead' | 'Opportunity'
+  entityId   String   // UUID of the entity — no FK constraint (polymorphic)
+  value      Json
+  updatedAt  DateTime @updatedAt
+
+  field      CustomField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@unique([fieldId, entityId])
+  @@index([entityType, entityId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EP-03: Lead Management
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Lead {
+  id                     String     @id @default(uuid())
+  organizationId         String
+  firstName              String
+  lastName               String
+  email                  String?
+  phone                  String?
+  company                String?
+  source                 String?
+  status                 LeadStatus @default(NEW)
+  score                  Int        @default(0)
+  ownerId                String?
+  notes                  String?
+  convertedAt            DateTime?
+  convertedContactId     String?
+  convertedOpportunityId String?
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  owner        User?        @relation("LeadOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  contact      Contact?     @relation(fields: [convertedContactId], references: [id])
+  activities   Activity[]
+  tasks        Task[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, ownerId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EP-04: Opportunity & Pipeline Tracking
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Pipeline {
+  id             String        @id @default(uuid())
+  organizationId String
+  name           String
+  isDefault      Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stages         Stage[]
+  opportunities  Opportunity[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model Stage {
+  id             String        @id @default(uuid())
+  organizationId String
+  pipelineId     String
+  name           String
+  probability    Int           @default(50)
+  order          Int
+  stageType      StageType     @default(OPEN)
+  createdAt      DateTime      @default(now())
+
+  pipeline       Pipeline      @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  opportunities  Opportunity[]
+  fromHistory    StageHistory[] @relation("FromStage")
+  toHistory      StageHistory[] @relation("ToStage")
+
+  @@unique([pipelineId, name])
+  @@index([pipelineId])
+}
+
+model Opportunity {
+  id             String            @id @default(uuid())
+  organizationId String
+  name           String
+  amount         BigInt?
+  currency       String            @default("USD")
+  closeDate      DateTime
+  stageId        String
+  pipelineId     String
+  contactId      String?
+  accountId      String?
+  ownerId        String?
+  probability    Int               @default(50)
+  status         OpportunityStatus @default(OPEN)
+  lostReason     String?
+  wonAt          DateTime?
+  lostAt         DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stage          Stage         @relation(fields: [stageId], references: [id])
+  pipeline       Pipeline      @relation(fields: [pipelineId], references: [id])
+  contact        Contact?      @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  account        Account?      @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  owner          User?         @relation("OpportunityOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  stageHistory   StageHistory[]
+  activities     Activity[]
+  tasks          Task[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, ownerId])
+  @@index([organizationId, stageId])
+  @@index([organizationId, closeDate])
+}
+
+model StageHistory {
+  id             String    @id @default(uuid())
+  organizationId String
+  opportunityId  String
+  fromStageId    String?
+  toStageId      String
+  changedById    String
+  changedAt      DateTime  @default(now())
+
+  opportunity    Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  fromStage      Stage?      @relation("FromStage", fields: [fromStageId], references: [id])
+  toStage        Stage       @relation("ToStage", fields: [toStageId], references: [id])
+  changedBy      User        @relation(fields: [changedById], references: [id])
+
+  @@index([opportunityId])
+  @@index([organizationId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EP-05: Activity & Task Management
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Activity {
+  id             String       @id @default(uuid())
+  organizationId String
+  type           ActivityType
+  subject        String
+  body           String?
+  dueAt          DateTime?
+  completedAt    DateTime?
+  duration       Int?
+  outcome        String?
+  contactId      String?
+  accountId      String?
+  leadId         String?
+  opportunityId  String?
+  userId         String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
+  contact        Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  account        Account?     @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  lead           Lead?        @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  opportunity    Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([organizationId, userId])
+  @@index([contactId])
+  @@index([opportunityId])
+  @@index([leadId])
+}
+
+model Task {
+  id             String       @id @default(uuid())
+  organizationId String
+  title          String
+  description    String?
+  dueAt          DateTime?
+  priority       TaskPriority @default(MEDIUM)
+  status         TaskStatus   @default(OPEN)
+  assigneeId     String
+  createdById    String
+  contactId      String?
+  accountId      String?
+  leadId         String?
+  opportunityId  String?
+  completedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignee       User         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  createdBy      User         @relation("TaskCreator", fields: [createdById], references: [id])
+  contact        Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  account        Account?     @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  lead           Lead?        @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  opportunity    Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([organizationId, assigneeId])
+  @@index([organizationId, status])
+  @@index([contactId])
+  @@index([opportunityId])
 }

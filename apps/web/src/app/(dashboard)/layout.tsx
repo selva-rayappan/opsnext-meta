@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
+  Building2,
   TrendingUp,
   Briefcase,
   Calendar,
@@ -26,6 +27,7 @@ import { cn } from '@/lib/utils';
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Contacts', href: '/contacts', icon: Users },
+  { label: 'Accounts', href: '/accounts', icon: Building2 },
   { label: 'Leads', href: '/leads', icon: TrendingUp },
   { label: 'Opportunities', href: '/opportunities', icon: Briefcase },
   { label: 'Activities', href: '/activities', icon: Calendar },

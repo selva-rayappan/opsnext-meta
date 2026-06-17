@@ -6,9 +6,8 @@ import { TenantContext } from '../../prisma/tenant-prisma.service';
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
-    interface Request {
-      user?: UserPayload;
-    }
+    // Merges UserPayload into Express.User so req.user carries our JWT fields
+    interface User extends UserPayload {}
   }
 }
 

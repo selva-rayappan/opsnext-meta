@@ -9,6 +9,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -20,6 +21,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strict": true,
+    "strictPropertyInitialization": false,
     "paths": {
       "@opsnext/shared": ["../../packages/shared/src/index.ts"]
     }

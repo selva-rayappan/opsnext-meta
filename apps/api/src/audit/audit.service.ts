@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { Role } from '@opsnext/shared';
 
@@ -36,8 +37,8 @@ export class AuditService {
           action: params.action,
           entityType: params.entityType,
           entityId: params.entityId ?? null,
-          before: params.before ?? null,
-          after: params.after ?? null,
+          before: params.before !== undefined ? (params.before as Prisma.InputJsonValue) : Prisma.JsonNull,
+          after: params.after !== undefined ? (params.after as Prisma.InputJsonValue) : Prisma.JsonNull,
           ipAddress: params.ipAddress ?? null,
           userAgent: params.userAgent ?? null,
         },
