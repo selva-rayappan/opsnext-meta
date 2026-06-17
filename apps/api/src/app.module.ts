@@ -22,6 +22,10 @@ import { OpportunitiesModule } from './opportunities/opportunities.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
+import { BullModule } from '@nestjs/bull';
+import { ActivitiesModule } from './activities/activities.module';
+import { TasksModule } from './tasks/tasks.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -50,6 +54,15 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware';
     // Global Prisma module (provides PrismaService + TenantPrismaService everywhere)
     PrismaModule,
 
+    // Global Queue config
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        redis: config.get<string>('REDIS_URL', 'redis://localhost:6379'),
+      }),
+    }),
+
     // Feature modules
     AuthModule,
     UsersModule,
@@ -68,6 +81,13 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware';
     // EP-04: Opportunity & Pipeline Tracking
     PipelinesModule,
     OpportunitiesModule,
+
+    // EP-05: Activity & Task Management
+    ActivitiesModule,
+    TasksModule,
+
+    // EP-07: Reporting & Dashboards
+    ReportsModule,
   ],
   providers: [
     // Apply rate-limiting guard globally

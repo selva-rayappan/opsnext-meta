@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import ActivityTimeline from '@/components/activity-timeline';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -667,19 +668,7 @@ export default function LeadDetailPage() {
               )}
             </div>
 
-            {/* Activity placeholder */}
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">Activity Timeline</h2>
-              <div className="flex flex-col items-center gap-3 py-8 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-                  <Clock className="h-6 w-6 text-slate-400" aria-hidden="true" />
-                </div>
-                <p className="text-sm font-medium text-slate-600">Activities coming in EP-05</p>
-                <p className="text-sm text-slate-400">
-                  Call logs, emails, notes, and tasks will appear here.
-                </p>
-              </div>
-            </div>
+            <ActivityTimeline leadId={lead.id} />
           </div>
 
           {/* Right column */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -366,7 +366,7 @@ function ConfirmForm({ token }: { token: string }) {
 // ---------------------------------------------------------------------------
 // Page — decides which sub-form to render
 // ---------------------------------------------------------------------------
-export default function ForgotPasswordPage() {
+function ForgotPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
@@ -375,4 +375,12 @@ export default function ForgotPasswordPage() {
   }
 
   return <RequestForm />;
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="px-8 py-10 text-center text-sm text-slate-500">Loading...</div>}>
+      <ForgotPasswordContent />
+    </Suspense>
+  );
 }

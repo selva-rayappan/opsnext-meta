@@ -699,7 +699,7 @@ export default function PipelinesSettingsPage() {
                     Delete {deleteTarget.type === 'pipeline' ? 'Pipeline' : 'Stage'}?
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">
-                    Are you sure you want to delete <span className="font-semibold text-slate-800">"{deleteTarget.name}"</span>?
+                    Are you sure you want to delete <span className="font-semibold text-slate-800">&ldquo;{deleteTarget.name}&rdquo;</span>?
                     This action cannot be undone.
                   </p>
                 </div>

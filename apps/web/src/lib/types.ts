@@ -266,3 +266,105 @@ export interface MarkLostDto {
   lostReason: string;
 }
 
+// ============================================================================
+// EP-05 & EP-07: Activities, Tasks, and Reporting Types
+// ============================================================================
+
+export type ActivityType = 'CALL' | 'MEETING' | 'EMAIL_LOG' | 'NOTE';
+
+export interface Activity {
+  id: string;
+  organizationId: string;
+  type: ActivityType;
+  subject: string;
+  body?: string;
+  dueAt?: string;
+  completedAt?: string;
+  duration?: number;
+  outcome?: string;
+  contactId?: string;
+  accountId?: string;
+  leadId?: string;
+  opportunityId?: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  user?: { id: string; firstName: string; lastName: string };
+  contact?: { id: string; firstName: string; lastName: string };
+  account?: { id: string; name: string };
+  lead?: { id: string; firstName: string; lastName: string };
+  opportunity?: { id: string; name: string };
+}
+
+export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+export type TaskStatus = 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface Task {
+  id: string;
+  organizationId: string;
+  title: string;
+  description?: string;
+  dueAt?: string;
+  completedAt?: string;
+  priority: TaskPriority;
+  status: TaskStatus;
+  assigneeId: string;
+  createdById: string;
+  contactId?: string;
+  accountId?: string;
+  leadId?: string;
+  opportunityId?: string;
+  createdAt: string;
+  updatedAt: string;
+  assignee?: { id: string; firstName: string; lastName: string; email: string };
+  createdBy?: { id: string; firstName: string; lastName: string };
+  contact?: { id: string; firstName: string; lastName: string };
+  account?: { id: string; name: string };
+  lead?: { id: string; firstName: string; lastName: string };
+  opportunity?: { id: string; name: string };
+}
+
+export interface PipelineSummaryRow {
+  name: string;
+  count: number;
+  totalValue: number;
+  expectedValue: number;
+}
+
+export interface ActivityByRepRow {
+  name: string;
+  email: string;
+  CALL: number;
+  MEETING: number;
+  EMAIL_LOG: number;
+  NOTE: number;
+  total: number;
+}
+
+export interface LeadFunnelStats {
+  statusCounts: {
+    NEW: number;
+    CONTACTED: number;
+    QUALIFIED: number;
+    UNQUALIFIED: number;
+    CONVERTED: number;
+    total: number;
+  };
+  conversionRate: number;
+}
+
+export interface WinLossStats {
+  wonCount: number;
+  wonValue: number;
+  lostCount: number;
+  lostValue: number;
+  winRate: number;
+}
+
+export interface RevenueForecastRow {
+  month: string;
+  totalValue: number;
+  expectedValue: number;
+}
+
+

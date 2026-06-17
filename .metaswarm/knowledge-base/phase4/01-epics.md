@@ -19,7 +19,7 @@
 | EP-02 | Contact & Account Management | FR-CONTACT | ✅ Complete | Sprint 3–4 |
 | EP-03 | Lead Management | FR-LEAD | ✅ Complete | Sprint 5 |
 | EP-04 | Opportunity & Pipeline Tracking | FR-OPP | ✅ Complete | Sprint 6 |
-| EP-05 | Activity & Task Management | FR-ACTIVITY | 🔄 In Progress | Sprint 7 |
+| EP-05 | Activity & Task Management | FR-ACTIVITY | ✅ Complete | Sprint 7 |
 | EP-06 | Email & Communication History | FR-EMAIL | 🔲 Planned | Sprint 7–8 |
 | EP-07 | Reporting & Dashboards | FR-REPORT | 🔄 In Progress | Sprint 8 |
 
@@ -128,22 +128,24 @@
 
 ---
 
-## EP-05: Activity & Task Management 🔄
+## EP-05: Activity & Task Management ✅
 
 **Goal:** Log all customer interactions (calls, meetings, notes) and track to-dos (tasks).
 
+**Status:** Complete — 2026-06-17
+
 **Done criteria:**
-- [ ] Activity CRUD (type: CALL, MEETING, NOTE)
-- [ ] Activity linked to Contact / Account / Lead / Opportunity (at least one required)
-- [ ] Call completion recording (duration, outcome required)
-- [ ] Task CRUD (assign to any team member in same org)
-- [ ] Task priority levels (LOW, MEDIUM, HIGH, URGENT)
-- [ ] Task status lifecycle (OPEN → IN_PROGRESS → COMPLETED | CANCELLED)
-- [ ] Due date reminders (in-app + email, via BullMQ scheduled job)
-- [ ] Activity timeline on Contact, Account, Lead, Opportunity detail pages
-- [ ] SALES_MANAGER views team activity; SALES_REP views own
-- [ ] Next.js: Activity log with filters (type, date, owner, linked entity)
-- [ ] Next.js: Task list with kanban + list view, overdue highlighting
+- [x] Activity CRUD (type: CALL, MEETING, NOTE)
+- [x] Activity linked to Contact / Account / Lead / Opportunity (at least one required)
+- [x] Call completion recording (duration, outcome required)
+- [x] Task CRUD (assign to any team member in same org)
+- [x] Task priority levels (LOW, MEDIUM, HIGH, URGENT)
+- [x] Task status lifecycle (OPEN → IN_PROGRESS → COMPLETED | CANCELLED)
+- [x] Due date reminders via BullMQ (TaskReminderSchedulerService, cron every 30 min, sendTaskReminder email)
+- [x] Activity timeline on Contact, Account, Lead, Opportunity detail pages (ActivityTimeline component)
+- [x] SALES_MANAGER views team activity; SALES_REP views own
+- [x] Next.js: Activity log with filters (type, date, owner, linked entity)
+- [x] Next.js: Task list with kanban + list view, overdue highlighting (combined in /activities page)
 
 **Key metrics:**
 - Activity timeline on Contact detail loads < 300ms
@@ -179,18 +181,21 @@
 
 **Goal:** Pre-built and custom reports giving sales leaders visibility into pipeline, activity, and revenue.
 
+**Status:** In Progress — backend + core report pages complete; saved reports, async export, drag-resize dashboard not yet built
+
 **Done criteria:**
-- [ ] Pre-built reports: Pipeline Summary, Activity by Rep, Lead Funnel, Win/Loss Analysis, Revenue Forecast
+- [x] Pre-built reports: Pipeline Summary, Activity by Rep, Lead Funnel, Win/Loss Analysis, Revenue Forecast
 - [ ] Saved Reports (save filters, share org-wide)
 - [ ] Dashboard with configurable widget layout (drag-to-resize)
-- [ ] Date range filters (this week, this month, this quarter, custom range)
-- [ ] Owner/team filters on all reports
-- [ ] CSV export for all reports (async BullMQ job → signed download URL)
-- [ ] SALES_MANAGER: team reports scoped to their team
-- [ ] SALES_REP: personal performance reports only
-- [ ] ADMIN/EXECUTIVE: org-wide reports
-- [ ] Next.js: Reports page with sidebar nav per report type
-- [ ] Next.js: Dashboard page (default + personal dashboards)
+- [x] Date range filters (this week, this month, this quarter, custom range)
+- [x] Owner/team filters on all reports
+- [x] CSV export for all reports (direct download — not async BullMQ yet)
+- [ ] CSV export via async BullMQ job → signed download URL
+- [x] SALES_MANAGER: team reports scoped to their team
+- [x] SALES_REP: personal performance reports only
+- [x] ADMIN/EXECUTIVE: org-wide reports
+- [x] Next.js: Reports page with sidebar nav per report type
+- [x] Next.js: Dashboard page (summary stats)
 - [ ] Next.js: Export download UI with polling for async jobs
 
 **Key metrics:**

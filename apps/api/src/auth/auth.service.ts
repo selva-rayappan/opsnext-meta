@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { Role, UserPayload } from '@opsnext/shared';
+import { StageType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { RegisterDto } from './dto/register.dto';
@@ -62,6 +63,24 @@ export class AuthService {
           firstName: dto.firstName,
           lastName: dto.lastName,
           role: Role.ADMIN,
+        },
+      });
+      // Seed a default pipeline so new orgs can create opportunities immediately
+      await tx.pipeline.create({
+        data: {
+          organizationId: organization.id,
+          name: 'Sales Pipeline',
+          isDefault: true,
+          stages: {
+            create: [
+              { organizationId: organization.id, name: 'Prospecting',   probability: 10,  order: 0, stageType: StageType.OPEN },
+              { organizationId: organization.id, name: 'Qualification', probability: 25,  order: 1, stageType: StageType.OPEN },
+              { organizationId: organization.id, name: 'Proposal',      probability: 50,  order: 2, stageType: StageType.OPEN },
+              { organizationId: organization.id, name: 'Negotiation',   probability: 75,  order: 3, stageType: StageType.OPEN },
+              { organizationId: organization.id, name: 'Closed Won',    probability: 100, order: 4, stageType: StageType.WON  },
+              { organizationId: organization.id, name: 'Closed Lost',   probability: 0,   order: 5, stageType: StageType.LOST },
+            ],
+          },
         },
       });
       return { org: organization, user: createdUser };

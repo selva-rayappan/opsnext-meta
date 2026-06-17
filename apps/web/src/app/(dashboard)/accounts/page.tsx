@@ -106,7 +106,7 @@ function AccountModal({
       name: account?.name ?? '',
       domain: account?.domain ?? '',
       industry: account?.industry ?? '',
-      employeeCount: account?.employeeCount ? String(account.employeeCount) : '',
+      employeeCount: account?.employeeCount ?? undefined,
       website: account?.website ?? '',
       phone: account?.phone ?? '',
     },

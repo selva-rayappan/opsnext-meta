@@ -149,6 +149,41 @@ let MailService = MailService_1 = class MailService {
     `;
         await this.send(to, subject, html);
     }
+    async sendTaskReminder(to, assigneeName, taskTitle, dueAt, orgName) {
+        const subject = `Reminder: "${taskTitle}" is due soon`;
+        const tasksUrl = `${this.appUrl}/activities`;
+        const dueStr = dueAt.toLocaleString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+        });
+        const html = `
+      <!DOCTYPE html>
+      <html>
+        <head><meta charset="utf-8"/></head>
+        <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 24px;">
+          <h2 style="color: #1a56db;">Task Due Soon</h2>
+          <p>Hi ${escapeHtml(assigneeName)},</p>
+          <p>This is a reminder that the following task is due within the next hour:</p>
+          <div style="background:#f8fafc;border-left:4px solid #1a56db;padding:16px 20px;border-radius:4px;margin:24px 0;">
+            <strong style="font-size:16px;">${escapeHtml(taskTitle)}</strong><br/>
+            <span style="color:#64748b;font-size:13px;">Due: ${escapeHtml(dueStr)}</span>
+          </div>
+          <p style="margin: 32px 0;">
+            <a href="${escapeHtml(tasksUrl)}"
+               style="background-color:#1a56db;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">
+              View Tasks
+            </a>
+          </p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;"/>
+          <p style="color: #999; font-size: 12px;">${escapeHtml(orgName)} &mdash; OpsNext CRM</p>
+        </body>
+      </html>
+    `;
+        await this.send(to, subject, html);
+    }
     async send(to, subject, html) {
         if (this.isDev) {
             this.logger.log(`[DEV] Email not sent (NODE_ENV !== production). Would have sent:\n` +

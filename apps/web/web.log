@@ -1,0 +1,40 @@
+No projects matched the filters "c:\Users\selvakumar.rayappan\Documents\opsnext-crm" in "C:\Users\selvakumar.rayappan\Documents\opsnext-crm"
+
+> @opsnext/web@0.1.0 dev C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\web
+> next dev --port 3000
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1664ms
+ ○ Compiling /contacts ...
+ ✓ Compiled /contacts in 8.8s (927 modules)
+ GET /contacts 200 in 9143ms
+ ○ Compiling /accounts ...
+ ✓ Compiled /accounts in 868ms (937 modules)
+ ○ Compiling /leads ...
+ ✓ Compiled /leads in 595ms (939 modules)
+ ○ Compiling /opportunities ...
+ ✓ Compiled /opportunities in 628ms (959 modules)
+ ○ Compiling /activities ...
+ ✓ Compiled /activities in 578ms (985 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 841ms (988 modules)
+ GET /email 404 in 226ms
+ GET /activities 200 in 66ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 776ms (992 modules)
+ GET /opportunities 200 in 176ms
+ GET /dashboard 200 in 41ms
+ ✓ Compiled in 854ms (1008 modules)
+ ✓ Compiled in 923ms (1008 modules)
+ ✓ Compiled in 386ms (1008 modules)
+ ✓ Compiled in 1200ms (1008 modules)
+ ○ Compiling /settings/pipelines ...
+ ✓ Compiled /settings/pipelines in 1127ms (1020 modules)
+ GET /settings/pipelines 200 in 1435ms
+ ○ Compiling /settings/users ...
+ ✓ Compiled /settings/users in 1586ms (1022 modules)
+ ✓ Compiled in 2.5s (1029 modules)

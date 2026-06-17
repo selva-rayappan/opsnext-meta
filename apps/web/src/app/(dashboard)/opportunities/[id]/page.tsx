@@ -33,6 +33,7 @@ import {
   markOpportunityWon,
   markOpportunityLost,
 } from '@/lib/opportunities-api';
+import ActivityTimeline from '@/components/activity-timeline';
 import { getAccounts } from '@/lib/accounts-api';
 import { getContacts } from '@/lib/contacts-api';
 import api from '@/lib/api';
@@ -431,71 +432,75 @@ export default function OpportunityDetailPage({ params }: { params: { id: string
         </div>
 
         {/* Right Side: Stage History Timeline */}
-        <div className="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col">
-          <h2 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <History className="h-5 w-5 text-primary-500" />
-            Stage Progression
-          </h2>
+        <div className="lg:col-span-1 space-y-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col">
+            <h2 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
+              <History className="h-5 w-5 text-primary-500" />
+              Stage Progression
+            </h2>
 
-          {stageHistory.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center text-xs text-slate-400 font-medium py-10">
-              No stage transition logs available.
-            </div>
-          ) : (
-            <div className="flex-1 flow-root">
-              <ul className="-mb-8">
-                {stageHistory.map((item, idx) => {
-                  const isLast = idx === stageHistory.length - 1;
-                  const timeSpent = !isLast && item.changedAt
-                    ? formatDuration(stageHistory[idx + 1].changedAt, item.changedAt)
-                    : null;
+            {stageHistory.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center text-xs text-slate-400 font-medium py-10">
+                No stage transition logs available.
+              </div>
+            ) : (
+              <div className="flex-1 flow-root">
+                <ul className="-mb-8">
+                  {stageHistory.map((item, idx) => {
+                    const isLast = idx === stageHistory.length - 1;
+                    const timeSpent = !isLast && item.changedAt
+                      ? formatDuration(stageHistory[idx + 1].changedAt, item.changedAt)
+                      : null;
 
-                  return (
-                    <li key={item.id}>
-                      <div className="relative pb-8">
-                        {!isLast && (
-                          <span
-                            className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-slate-200"
-                            aria-hidden="true"
-                          />
-                        )}
-                        <div className="relative flex space-x-3">
-                          <div>
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 ring-4 ring-white">
-                              <History className="h-4 w-4 text-slate-500" />
-                            </span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs font-semibold text-slate-950">
-                              {item.fromStage ? (
-                                <span className="flex items-center gap-1.5 flex-wrap">
-                                  {item.fromStage.name}
-                                  <ArrowRight className="h-3 w-3 text-slate-400 shrink-0" />
-                                  <span className="text-primary-700">{item.toStage?.name}</span>
+                    return (
+                      <li key={item.id}>
+                        <div className="relative pb-8">
+                          {!isLast && (
+                            <span
+                              className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-slate-200"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <div className="relative flex space-x-3">
+                            <div>
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 ring-4 ring-white">
+                                <History className="h-4 w-4 text-slate-500" />
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold text-slate-950">
+                                {item.fromStage ? (
+                                  <span className="flex items-center gap-1.5 flex-wrap">
+                                    {item.fromStage.name}
+                                    <ArrowRight className="h-3 w-3 text-slate-400 shrink-0" />
+                                    <span className="text-primary-700">{item.toStage?.name}</span>
+                                  </span>
+                                ) : (
+                                  <span>Opportunity Created in <span className="text-primary-700">{item.toStage?.name}</span></span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 font-medium mt-1">
+                                by {item.changedBy ? `${item.changedBy.firstName} ${item.changedBy.lastName}` : 'System'}
+                                {item.changedAt && ` • ${formatDate(item.changedAt)} at ${formatTime(item.changedAt)}`}
+                              </p>
+                              {timeSpent && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 border border-slate-200 px-2 py-0.5 text-[9px] font-bold text-slate-600 mt-2">
+                                  <Clock className="h-2.5 w-2.5" />
+                                  Time spent in stage: {timeSpent}
                                 </span>
-                              ) : (
-                                <span>Opportunity Created in <span className="text-primary-700">{item.toStage?.name}</span></span>
                               )}
                             </div>
-                            <p className="text-[10px] text-slate-400 font-medium mt-1">
-                              by {item.changedBy ? `${item.changedBy.firstName} ${item.changedBy.lastName}` : 'System'}
-                              {item.changedAt && ` • ${formatDate(item.changedAt)} at ${formatTime(item.changedAt)}`}
-                            </p>
-                            {timeSpent && (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 border border-slate-200 px-2 py-0.5 text-[9px] font-bold text-slate-600 mt-2">
-                                <Clock className="h-2.5 w-2.5" />
-                                Time spent in stage: {timeSpent}
-                              </span>
-                            )}
                           </div>
                         </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <ActivityTimeline opportunityId={opp.id} />
         </div>
       </div>
 
@@ -657,7 +662,7 @@ export default function OpportunityDetailPage({ params }: { params: { id: string
               Delete Opportunity?
             </h3>
             <p className="mt-2 text-sm text-slate-500">
-              Are you sure you want to delete <span className="font-semibold text-slate-800">"{opp.name}"</span>?
+              Are you sure you want to delete <span className="font-semibold text-slate-800">&ldquo;{opp.name}&rdquo;</span>?
               This action cannot be undone.
             </p>
             <div className="mt-5 flex justify-end gap-3">

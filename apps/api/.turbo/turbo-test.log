@@ -2,12 +2,15 @@
 > @opsnext/api@0.1.0 test C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\api
 > jest
 
-PASS src/opportunities/opportunities.service.spec.ts
-PASS src/leads/leads.service.spec.ts
-PASS src/pipelines/pipelines.service.spec.ts
+PASS src/leads/leads.service.spec.ts (7.436 s)
+PASS src/opportunities/opportunities.service.spec.ts (7.561 s)
+PASS src/pipelines/pipelines.service.spec.ts (7.626 s)
+PASS src/reports/reports.service.spec.ts (7.654 s)
+PASS src/tasks/tasks.service.spec.ts (8.933 s)
+PASS src/activities/activities.service.spec.ts (9.123 s)
 
-Test Suites: 3 passed, 3 total
-Tests:       30 passed, 30 total
+Test Suites: 6 passed, 6 total
+Tests:       44 passed, 44 total
 Snapshots:   0 total
-Time:        4.812 s, estimated 7 s
+Time:        10.501 s
 Ran all test suites.

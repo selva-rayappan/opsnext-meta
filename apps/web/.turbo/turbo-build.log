@@ -1,0 +1,34 @@
+
+> @opsnext/web@0.1.0 build C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\web
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/16) ...
+ ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/forgot-password". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at o (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\web\.next\server\chunks\233.js:4:15195)
+    at u (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\web\.next\server\chunks\233.js:4:26130)
+    at N (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\web\.next\server\app\(auth)\forgot-password\page.js:1:10330)
+    at nj (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46252)
+    at nM (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47572)
+    at nL (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+    at nI (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47011)
+    at nM (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47718)
+    at nM (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61547)
+    at nL (C:\Users\selvakumar.rayappan\Documents\opsnext-crm\node_modules\.pnpm\next@14.2.35_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64547)
+
+Error occurred prerendering page "/forgot-password". Read more: https://nextjs.org/docs/messages/prerender-error
+
+   Generating static pages (4/16) 
+   Generating static pages (8/16) 
+   Generating static pages (12/16) 
+ ✓ Generating static pages (16/16)
+
+> Export encountered errors on following paths:
+	/(auth)/forgot-password/page: /forgot-password
+ ELIFECYCLE  Command failed with exit code 1.

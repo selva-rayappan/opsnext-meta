@@ -20,9 +20,16 @@ const contacts_module_1 = require("./contacts/contacts.module");
 const accounts_module_1 = require("./accounts/accounts.module");
 const tags_module_1 = require("./tags/tags.module");
 const custom_fields_module_1 = require("./custom-fields/custom-fields.module");
+const leads_module_1 = require("./leads/leads.module");
+const pipelines_module_1 = require("./pipelines/pipelines.module");
+const opportunities_module_1 = require("./opportunities/opportunities.module");
 const jwt_auth_guard_1 = require("./common/guards/jwt-auth.guard");
 const roles_guard_1 = require("./common/guards/roles.guard");
 const tenant_middleware_1 = require("./common/middleware/tenant.middleware");
+const bull_1 = require("@nestjs/bull");
+const activities_module_1 = require("./activities/activities.module");
+const tasks_module_1 = require("./tasks/tasks.module");
+const reports_module_1 = require("./reports/reports.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -52,6 +59,13 @@ exports.AppModule = AppModule = __decorate([
                 }),
             }),
             prisma_module_1.PrismaModule,
+            bull_1.BullModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (config) => ({
+                    redis: config.get('REDIS_URL', 'redis://localhost:6379'),
+                }),
+            }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             organizations_module_1.OrganizationsModule,
@@ -60,6 +74,12 @@ exports.AppModule = AppModule = __decorate([
             accounts_module_1.AccountsModule,
             tags_module_1.TagsModule,
             custom_fields_module_1.CustomFieldsModule,
+            leads_module_1.LeadsModule,
+            pipelines_module_1.PipelinesModule,
+            opportunities_module_1.OpportunitiesModule,
+            activities_module_1.ActivitiesModule,
+            tasks_module_1.TasksModule,
+            reports_module_1.ReportsModule,
         ],
         providers: [
             {

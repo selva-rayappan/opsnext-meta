@@ -50,6 +50,7 @@ const bcrypt = __importStar(require("bcrypt"));
 const crypto = __importStar(require("crypto"));
 const uuid_1 = require("uuid");
 const shared_1 = require("@opsnext/shared");
+const client_1 = require("@prisma/client");
 const prisma_service_1 = require("../prisma/prisma.service");
 const mail_service_1 = require("../mail/mail.service");
 const BCRYPT_ROUNDS = 12;
@@ -80,6 +81,23 @@ let AuthService = class AuthService {
                     firstName: dto.firstName,
                     lastName: dto.lastName,
                     role: shared_1.Role.ADMIN,
+                },
+            });
+            await tx.pipeline.create({
+                data: {
+                    organizationId: organization.id,
+                    name: 'Sales Pipeline',
+                    isDefault: true,
+                    stages: {
+                        create: [
+                            { organizationId: organization.id, name: 'Prospecting', probability: 10, order: 0, stageType: client_1.StageType.OPEN },
+                            { organizationId: organization.id, name: 'Qualification', probability: 25, order: 1, stageType: client_1.StageType.OPEN },
+                            { organizationId: organization.id, name: 'Proposal', probability: 50, order: 2, stageType: client_1.StageType.OPEN },
+                            { organizationId: organization.id, name: 'Negotiation', probability: 75, order: 3, stageType: client_1.StageType.OPEN },
+                            { organizationId: organization.id, name: 'Closed Won', probability: 100, order: 4, stageType: client_1.StageType.WON },
+                            { organizationId: organization.id, name: 'Closed Lost', probability: 0, order: 5, stageType: client_1.StageType.LOST },
+                        ],
+                    },
                 },
             });
             return { org: organization, user: createdUser };

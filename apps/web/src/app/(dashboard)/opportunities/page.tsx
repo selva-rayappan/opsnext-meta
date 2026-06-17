@@ -255,36 +255,48 @@ export default function OpportunitiesPage() {
   const watchStageId = watch('stageId');
   const watchPipelineId = watch('pipelineId');
 
-  // Handle stage default probability auto-fill
+  // Derive form-level pipeline and its stages (independent from the board filter)
+  const formPipeline = pipelines.find((p) => p.id === watchPipelineId);
+  const formStages = formPipeline?.stages ?? [];
+
+  // Auto-fill probability from the selected stage
   useEffect(() => {
-    if (watchStageId && selectedPipeline) {
-      const currentStage = selectedPipeline.stages?.find((s) => s.id === watchStageId);
+    if (watchStageId && formPipeline) {
+      const currentStage = formPipeline.stages?.find((s) => s.id === watchStageId);
       if (currentStage) {
         setValue('probability', currentStage.probability);
       }
     }
-  }, [watchStageId, selectedPipeline, setValue]);
+  }, [watchStageId, formPipeline, setValue]);
 
-  // Handle pipeline selection inside form
+  // When user changes pipeline in the form, default to that pipeline's first stage
   useEffect(() => {
     if (watchPipelineId) {
       const pipe = pipelines.find((p) => p.id === watchPipelineId);
       if (pipe && pipe.stages && pipe.stages.length > 0) {
-        // Automatically default to the first stage of the selected pipeline
         setValue('stageId', pipe.stages[0].id);
+        setValue('probability', pipe.stages[0].probability);
+      } else {
+        setValue('stageId', '');
       }
     }
   }, [watchPipelineId, pipelines, setValue]);
 
   const handleOpenCreateModal = () => {
+    // Prefer default pipeline; fall back to first pipeline that has stages
+    const bestPipeline =
+      pipelines.find((p) => p.isDefault && (p.stages?.length ?? 0) > 0) ??
+      pipelines.find((p) => (p.stages?.length ?? 0) > 0) ??
+      pipelines[0];
+    const firstStage = bestPipeline?.stages?.[0];
     reset({
       name: '',
       amount: 0,
       currency: 'USD',
       closeDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      pipelineId: selectedPipelineId,
-      stageId: stages[0]?.id ?? '',
-      probability: stages[0]?.probability ?? 50,
+      pipelineId: bestPipeline?.id ?? '',
+      stageId: firstStage?.id ?? '',
+      probability: firstStage?.probability ?? 50,
       contactId: '',
       accountId: '',
       ownerId: '',
@@ -828,6 +840,15 @@ export default function OpportunitiesPage() {
               className="flex-1 overflow-y-auto"
             >
               <div className="p-6 space-y-4">
+                {pipelines.length === 0 && (
+                  <div role="alert" className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    No pipelines found. Please{' '}
+                    <a href="/settings/pipelines" className="font-semibold underline hover:text-amber-900">
+                      create a pipeline
+                    </a>{' '}
+                    with at least one stage before adding opportunities.
+                  </div>
+                )}
                 {apiError && (
                   <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                     {apiError}
@@ -872,13 +893,19 @@ export default function OpportunitiesPage() {
                     <select
                       {...register('stageId')}
                       className="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      disabled={formStages.length === 0}
                     >
-                      {stages.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name} ({s.probability}%)
-                        </option>
-                      ))}
+                      {formStages.length === 0 ? (
+                        <option value="">— select a pipeline first —</option>
+                      ) : (
+                        formStages.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name} ({s.probability}%)
+                          </option>
+                        ))
+                      )}
                     </select>
+                    {errors.stageId && <p className="mt-1 text-xs text-red-600">{errors.stageId.message}</p>}
                   </div>
 
                   <div>
