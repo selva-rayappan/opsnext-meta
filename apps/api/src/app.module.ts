@@ -16,6 +16,7 @@ import { ContactsModule } from './contacts/contacts.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { TagsModule } from './tags/tags.module';
 import { CustomFieldsModule } from './custom-fields/custom-fields.module';
+import { LeadsModule } from './leads/leads.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
@@ -58,6 +59,9 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware';
     AccountsModule,
     TagsModule,
     CustomFieldsModule,
+
+    // EP-03: Lead Management
+    LeadsModule,
   ],
   providers: [
     // Apply rate-limiting guard globally

@@ -84,3 +84,50 @@ export interface ImportResult {
   skipped: number;
   errors: string[];
 }
+
+// ---------------------------------------------------------------------------
+// Lead (EP-03)
+// ---------------------------------------------------------------------------
+
+export type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'UNQUALIFIED' | 'CONVERTED';
+
+export interface Lead {
+  id: string;
+  organizationId: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  phone: string | null;
+  company: string | null;
+  source: string | null;
+  status: LeadStatus;
+  score: number;
+  ownerId: string | null;
+  notes: string | null;
+  convertedAt: string | null;
+  convertedContactId: string | null;
+  convertedOpportunityId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  owner: { id: string; firstName: string; lastName: string } | null;
+}
+
+export interface CreateLeadDto {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  source?: string;
+  score?: number;
+  notes?: string;
+}
+
+export type UpdateLeadDto = Partial<CreateLeadDto> & { status?: LeadStatus };
+
+export interface ConvertLeadDto {
+  createOpportunity: boolean;
+  opportunityTitle?: string;
+  pipelineId?: string;
+  amount?: number;
+}
