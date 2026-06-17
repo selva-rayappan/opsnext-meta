@@ -1,8 +1,10 @@
 {
-  "/(dashboard)/contacts/page": "app/(dashboard)/contacts/page.js",
-  "/(dashboard)/accounts/page": "app/(dashboard)/accounts/page.js",
-  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/(auth)/register/page": "app/(auth)/register/page.js",
-  "/(dashboard)/leads/page": "app/(dashboard)/leads/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js"
+  "/(dashboard)/contacts/page": "app/(dashboard)/contacts/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(dashboard)/accounts/page": "app/(dashboard)/accounts/page.js",
+  "/(dashboard)/opportunities/page": "app/(dashboard)/opportunities/page.js",
+  "/(dashboard)/leads/page": "app/(dashboard)/leads/page.js"
 }

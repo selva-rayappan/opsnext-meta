@@ -17,6 +17,8 @@ import { AccountsModule } from './accounts/accounts.module';
 import { TagsModule } from './tags/tags.module';
 import { CustomFieldsModule } from './custom-fields/custom-fields.module';
 import { LeadsModule } from './leads/leads.module';
+import { PipelinesModule } from './pipelines/pipelines.module';
+import { OpportunitiesModule } from './opportunities/opportunities.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
@@ -62,6 +64,10 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware';
 
     // EP-03: Lead Management
     LeadsModule,
+
+    // EP-04: Opportunity & Pipeline Tracking
+    PipelinesModule,
+    OpportunitiesModule,
   ],
   providers: [
     // Apply rate-limiting guard globally

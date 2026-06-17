@@ -1,0 +1,13 @@
+
+> @opsnext/api@0.1.0 test C:\Users\selvakumar.rayappan\Documents\opsnext-crm\apps\api
+> jest
+
+PASS src/opportunities/opportunities.service.spec.ts
+PASS src/leads/leads.service.spec.ts
+PASS src/pipelines/pipelines.service.spec.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       30 passed, 30 total
+Snapshots:   0 total
+Time:        4.812 s, estimated 7 s
+Ran all test suites.

@@ -131,3 +131,138 @@ export interface ConvertLeadDto {
   pipelineId?: string;
   amount?: number;
 }
+
+// ---------------------------------------------------------------------------
+// Opportunity & Pipeline (EP-04)
+// ---------------------------------------------------------------------------
+
+export type StageType = 'OPEN' | 'WON' | 'LOST';
+
+export interface Stage {
+  id: string;
+  organizationId: string;
+  pipelineId: string;
+  name: string;
+  probability: number;
+  order: number;
+  stageType: StageType;
+  createdAt: string;
+}
+
+export interface Pipeline {
+  id: string;
+  organizationId: string;
+  name: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+  stages?: Stage[];
+}
+
+export type OpportunityStatus = 'OPEN' | 'WON' | 'LOST';
+
+export interface Opportunity {
+  id: string;
+  organizationId: string;
+  name: string;
+  amount: number | null;
+  currency: string;
+  closeDate: string;
+  stageId: string;
+  pipelineId: string;
+  contactId: string | null;
+  accountId: string | null;
+  ownerId: string | null;
+  probability: number;
+  status: OpportunityStatus;
+  lostReason: string | null;
+  wonAt: string | null;
+  lostAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  stage?: Stage;
+  pipeline?: Pipeline;
+  contact?: { id: string; firstName: string; lastName: string } | null;
+  account?: { id: string; name: string } | null;
+  owner?: { id: string; firstName: string; lastName: string } | null;
+  stageHistory?: StageHistory[];
+}
+
+export interface StageHistory {
+  id: string;
+  organizationId: string;
+  opportunityId: string;
+  fromStageId: string | null;
+  toStageId: string;
+  changedById: string;
+  changedAt: string;
+  fromStage?: Stage | null;
+  toStage?: Stage;
+  changedBy?: { id: string; firstName: string; lastName: string };
+}
+
+// DTOs
+export interface CreatePipelineDto {
+  name: string;
+  isDefault?: boolean;
+}
+
+export interface UpdatePipelineDto {
+  name?: string;
+  isDefault?: boolean;
+}
+
+export interface CreateStageDto {
+  name: string;
+  probability?: number;
+  stageType?: StageType;
+}
+
+export interface UpdateStageDto {
+  name?: string;
+  probability?: number;
+  stageType?: StageType;
+}
+
+export interface ReorderStagesDto {
+  stageIds: string[];
+}
+
+export interface CreateOpportunityDto {
+  name: string;
+  amount?: number;
+  currency?: string;
+  closeDate: string;
+  pipelineId: string;
+  stageId: string;
+  contactId?: string;
+  accountId?: string;
+  ownerId?: string;
+  probability?: number;
+}
+
+export interface UpdateOpportunityDto {
+  name?: string;
+  amount?: number;
+  currency?: string;
+  closeDate?: string;
+  pipelineId?: string;
+  stageId?: string;
+  contactId?: string;
+  accountId?: string;
+  ownerId?: string;
+  probability?: number;
+}
+
+export interface ChangeStageDto {
+  stageId: string;
+}
+
+export interface MarkWonDto {
+  wonAt?: string;
+}
+
+export interface MarkLostDto {
+  lostReason: string;
+}
+

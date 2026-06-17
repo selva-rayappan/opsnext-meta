@@ -1,0 +1,10 @@
+John,Doe,john.doe@example.com,+14155550101,Sales Manager,Website
+Jane,Smith,jane.smith@example.com,+14155550102,Marketing Director,LinkedIn
+Michael,Johnson,michael.johnson@example.com,+14155550103,CEO,Referral
+Emily,Davis,emily.davis@example.com,+14155550104,Operations Manager,Trade Show
+David,Wilson,david.wilson@example.com,+14155550105,IT Manager,Website
+Sarah,Brown,sarah.brown@example.com,+14155550106,HR Manager,Facebook
+Robert,Taylor,robert.taylor@example.com,+14155550107,Business Analyst,Cold Call
+Linda,Anderson,linda.anderson@example.com,+14155550108,Procurement Head,Referral
+James,Thomas,james.thomas@example.com,+14155550109,Project Manager,LinkedIn
+Patricia,Moore,patricia.moore@example.com,+14155550110,Finance Manager,Website

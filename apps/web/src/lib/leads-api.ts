@@ -111,9 +111,13 @@ export async function convertLead(
   id: string,
   dto: ConvertLeadDto,
 ): Promise<ConvertLeadResult> {
-  const response = await api.post<ConvertLeadResult>(
-    `/api/v1/leads/${id}/convert`,
-    dto,
-  );
-  return response.data;
+  const response = await api.post<{
+    lead: any;
+    contact: { id: string };
+    opportunity?: { id: string };
+  }>(`/api/v1/leads/${id}/convert`, dto);
+  return {
+    contactId: response.data.contact.id,
+    opportunityId: response.data.opportunity?.id,
+  };
 }

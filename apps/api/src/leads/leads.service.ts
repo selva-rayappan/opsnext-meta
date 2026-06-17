@@ -315,7 +315,7 @@ export class LeadsService {
   ): Promise<{
     lead: LeadRow;
     contact: Prisma.ContactGetPayload<Record<string, never>>;
-    opportunity?: Prisma.OpportunityGetPayload<Record<string, never>>;
+    opportunity?: any;
   }> {
     const existingLead = await this.findById(id, orgId);
 
@@ -399,7 +399,15 @@ export class LeadsService {
         include: LEAD_INCLUDE,
       });
 
-      return { lead: updatedLead as LeadRow, contact, opportunity };
+      let serializedOpportunity: any = undefined;
+      if (opportunity) {
+        serializedOpportunity = {
+          ...opportunity,
+          amount: opportunity.amount !== null ? Number(opportunity.amount) / 100 : null,
+        };
+      }
+
+      return { lead: updatedLead as LeadRow, contact, opportunity: serializedOpportunity };
     });
 
     await this.audit.log({

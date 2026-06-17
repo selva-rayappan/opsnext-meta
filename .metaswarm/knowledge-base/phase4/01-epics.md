@@ -17,11 +17,11 @@
 |---|---|---|---|---|
 | EP-01 | User Roles & Permissions | FR-AUTH | ✅ Complete | Sprint 1–2 |
 | EP-02 | Contact & Account Management | FR-CONTACT | ✅ Complete | Sprint 3–4 |
-| EP-03 | Lead Management | FR-LEAD | 🔄 In Progress | Sprint 5 |
-| EP-04 | Opportunity & Pipeline Tracking | FR-OPP | 🔲 Planned | Sprint 6 |
-| EP-05 | Activity & Task Management | FR-ACTIVITY | 🔲 Planned | Sprint 7 |
+| EP-03 | Lead Management | FR-LEAD | ✅ Complete | Sprint 5 |
+| EP-04 | Opportunity & Pipeline Tracking | FR-OPP | ✅ Complete | Sprint 6 |
+| EP-05 | Activity & Task Management | FR-ACTIVITY | 🔄 In Progress | Sprint 7 |
 | EP-06 | Email & Communication History | FR-EMAIL | 🔲 Planned | Sprint 7–8 |
-| EP-07 | Reporting & Dashboards | FR-REPORT | 🔲 Planned | Sprint 8 |
+| EP-07 | Reporting & Dashboards | FR-REPORT | 🔄 In Progress | Sprint 8 |
 
 ---
 
@@ -77,23 +77,23 @@
 
 ---
 
-## EP-03: Lead Management 🔄
+## EP-03: Lead Management ✅
 
 **Goal:** Capture, qualify, score, and convert inbound leads into Contacts and Opportunities.
 
-**Status:** In Progress — 2026-06-17
+**Status:** Complete — 2026-06-17
 
 **Done criteria:**
-- [ ] Lead CRUD (create, read, update, delete)
-- [ ] Lead status lifecycle: NEW → CONTACTED → QUALIFIED / UNQUALIFIED → CONVERTED
-- [ ] Lead score field (0–100; manual entry in Phase 3, auto-scoring in Year 2)
-- [ ] Lead source tracking (web, referral, cold-call, CSV import, API)
-- [ ] Lead-to-Contact conversion (creates Contact + optional Opportunity atomically)
-- [ ] Bulk lead import via CSV
-- [ ] Lead owner assignment and reassignment
-- [ ] SALES_MANAGER can view all team leads; SALES_REP sees only own
-- [ ] Next.js: Lead list with status kanban view + table view toggle
-- [ ] Next.js: Lead detail page with conversion wizard
+- [x] Lead CRUD (create, read, update, delete)
+- [x] Lead status lifecycle: NEW → CONTACTED → QUALIFIED / UNQUALIFIED → CONVERTED
+- [x] Lead score field (0–100; manual entry in Phase 3, auto-scoring in Year 2)
+- [x] Lead source tracking (web, referral, cold-call, CSV import, API)
+- [x] Lead-to-Contact conversion (creates Contact + optional Opportunity atomically)
+- [x] Bulk lead import via CSV
+- [x] Lead owner assignment and reassignment
+- [x] SALES_MANAGER can view all team leads; SALES_REP sees only own
+- [x] Next.js: Lead list with status kanban view + table view toggle
+- [x] Next.js: Lead detail page with conversion wizard
 
 **Key metrics:**
 - Lead conversion creates Contact + Opportunity in a single transaction (no partial failures)
@@ -101,24 +101,26 @@
 
 ---
 
-## EP-04: Opportunity & Pipeline Tracking
+## EP-04: Opportunity & Pipeline Tracking ✅
 
 **Goal:** Visual pipeline tracking, stage management, win/loss recording, and forecasting.
 
+**Status:** Complete — 2026-06-17
+
 **Done criteria:**
-- [ ] Pipeline CRUD (create, name, set as default)
-- [ ] Stage CRUD within a Pipeline (add/remove/reorder stages)
-- [ ] Opportunity CRUD
-- [ ] Stage transition (change stage → records StageHistory)
-- [ ] Win recording (requires wonAt, amount optional)
-- [ ] Loss recording (requires lostReason, lostAt)
-- [ ] Probability override per opportunity
-- [ ] Pipeline view (kanban board grouped by stage, drag-to-move)
-- [ ] Forecast view (weighted revenue by close date period)
-- [ ] SALES_MANAGER sees full team pipeline; SALES_REP sees own only
-- [ ] Next.js: Pipeline kanban board (drag-and-drop stage transitions)
-- [ ] Next.js: Opportunity detail page with stage history timeline
-- [ ] Next.js: Forecast table (by owner, by month)
+- [x] Pipeline CRUD (create, name, set as default)
+- [x] Stage CRUD within a Pipeline (add/remove/reorder stages)
+- [x] Opportunity CRUD
+- [x] Stage transition (change stage → records StageHistory)
+- [x] Win recording (requires wonAt, amount optional)
+- [x] Loss recording (requires lostReason, lostAt)
+- [x] Probability override per opportunity
+- [x] Pipeline view (kanban board grouped by stage, drag-to-move)
+- [x] Forecast view (weighted revenue by close date period)
+- [x] SALES_MANAGER sees full team pipeline; SALES_REP sees own only
+- [x] Next.js: Pipeline kanban board (drag-and-drop stage transitions)
+- [x] Next.js: Opportunity detail page with stage history timeline
+- [x] Next.js: Forecast table (by owner, by month)
 
 **Key metrics:**
 - Kanban board renders with 200 open opportunities in < 500ms
@@ -126,7 +128,7 @@
 
 ---
 
-## EP-05: Activity & Task Management
+## EP-05: Activity & Task Management 🔄
 
 **Goal:** Log all customer interactions (calls, meetings, notes) and track to-dos (tasks).
 
@@ -173,7 +175,7 @@
 
 ---
 
-## EP-07: Reporting & Dashboards
+## EP-07: Reporting & Dashboards 🔄
 
 **Goal:** Pre-built and custom reports giving sales leaders visibility into pipeline, activity, and revenue.
 

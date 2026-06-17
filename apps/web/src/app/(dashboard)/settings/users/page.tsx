@@ -1,6 +1,8 @@
 'use client';
 
 import React, { Fragment, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -607,6 +609,44 @@ function formatLastLogin(dateStr: string | null): string {
 }
 
 // ---------------------------------------------------------------------------
+// Settings Tab Sub-navigation Helper
+// ---------------------------------------------------------------------------
+function SettingsHeader() {
+  const pathname = usePathname();
+  const isActiveUsers = pathname === '/settings/users';
+  const isActivePipelines = pathname === '/settings/pipelines';
+
+  return (
+    <div className="mb-6 border-b border-slate-200">
+      <nav className="-mb-px flex gap-6" aria-label="Tabs">
+        <Link
+          href="/settings/users"
+          className={cn(
+            'border-b-2 py-4 px-1 text-sm font-medium transition-colors',
+            isActiveUsers
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700',
+          )}
+        >
+          Users & Roles
+        </Link>
+        <Link
+          href="/settings/pipelines"
+          className={cn(
+            'border-b-2 py-4 px-1 text-sm font-medium transition-colors',
+            isActivePipelines
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700',
+          )}
+        >
+          Pipelines & Stages
+        </Link>
+      </nav>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
 const PAGE_SIZE = 20;
@@ -641,12 +681,19 @@ export default function UsersPage() {
   return (
     <>
       <div className="px-6 py-8 lg:px-10">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Settings</h1>
+          <p className="mt-1 text-sm text-slate-500">Configure team workspace preferences and systems.</p>
+        </div>
+
+        <SettingsHeader />
+
         {/* Page header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900">
               Team members
-            </h1>
+            </h2>
             <p className="mt-1 text-sm text-slate-500">
               Manage user accounts and roles for your organization.
             </p>
