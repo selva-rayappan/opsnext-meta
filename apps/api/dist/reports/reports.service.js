@@ -225,6 +225,51 @@ let ReportsService = class ReportsService {
         }
         return 'No data available';
     }
+    async getSavedReports(orgId, userId) {
+        return this.prisma.savedReport.findMany({
+            where: {
+                organizationId: orgId,
+                OR: [{ isShared: true }, { createdById: userId }],
+            },
+            include: {
+                createdBy: {
+                    select: { id: true, firstName: true, lastName: true },
+                },
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
+    async createSavedReport(dto, createdById, orgId) {
+        return this.prisma.savedReport.create({
+            data: {
+                organizationId: orgId,
+                createdById,
+                name: dto.name,
+                reportType: dto.reportType,
+                filters: (dto.filters ?? {}),
+                isShared: dto.isShared ?? false,
+            },
+            include: {
+                createdBy: {
+                    select: { id: true, firstName: true, lastName: true },
+                },
+            },
+        });
+    }
+    async deleteSavedReport(id, userId, orgId, role) {
+        const report = await this.prisma.savedReport.findFirst({
+            where: { id, organizationId: orgId },
+        });
+        if (!report) {
+            throw new common_1.NotFoundException(`SavedReport ${id} not found`);
+        }
+        const isOwner = report.createdById === userId;
+        const isAdmin = role === client_1.Role.ADMIN || role === client_1.Role.SUPER_ADMIN;
+        if (!isOwner && !isAdmin) {
+            throw new common_1.ForbiddenException('Only the creator or an admin can delete this saved report');
+        }
+        await this.prisma.savedReport.delete({ where: { id } });
+    }
 };
 exports.ReportsService = ReportsService;
 exports.ReportsService = ReportsService = __decorate([

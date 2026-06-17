@@ -94,6 +94,8 @@ model Organization {
   // EP-05
   activities          Activity[]
   tasks               Task[]
+  // EP-07
+  savedReports        SavedReport[]
 }
 
 model User {
@@ -126,6 +128,8 @@ model User {
   activities     Activity[]
   assignedTasks  Task[]          @relation("TaskAssignee")
   createdTasks   Task[]          @relation("TaskCreator")
+  // EP-07
+  savedReports   SavedReport[]   @relation("SavedReportCreator")
 
   @@unique([organizationId, email])
   @@index([organizationId])
@@ -553,4 +557,26 @@ model Task {
   @@index([organizationId, status])
   @@index([contactId])
   @@index([opportunityId])
+}
+
+// ---------------------------------------------------------------------------
+// EP-07: Reporting — Saved Reports
+// ---------------------------------------------------------------------------
+
+model SavedReport {
+  id             String   @id @default(uuid())
+  organizationId String
+  createdById    String
+  name           String
+  reportType     String
+  filters        Json     @default("{}")
+  isShared       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy      User         @relation("SavedReportCreator", fields: [createdById], references: [id])
+
+  @@index([organizationId])
+  @@index([createdById])
 }

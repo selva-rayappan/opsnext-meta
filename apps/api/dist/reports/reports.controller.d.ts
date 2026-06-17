@@ -1,9 +1,12 @@
+import { Queue } from 'bull';
 import { Response } from 'express';
 import { UserPayload } from '@opsnext/shared';
 import { ReportsService } from './reports.service';
+import { CreateSavedReportDto } from './dto/create-saved-report.dto';
 export declare class ReportsController {
     private readonly service;
-    constructor(service: ReportsService);
+    private readonly reportsQueue;
+    constructor(service: ReportsService, reportsQueue: Queue);
     getPipelineSummary(user: UserPayload): Promise<{
         name: string;
         count: number;
@@ -43,4 +46,49 @@ export declare class ReportsController {
         expectedValue: number;
     }[]>;
     export(type: string, user: UserPayload, res: Response): Promise<Response<any, Record<string, any>>>;
+    getSavedReports(user: UserPayload): Promise<({
+        createdBy: {
+            id: string;
+            firstName: string;
+            lastName: string;
+        };
+    } & {
+        organizationId: string;
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        createdById: string;
+        reportType: string;
+        filters: import("@prisma/client/runtime/library").JsonValue;
+        isShared: boolean;
+    })[]>;
+    createSavedReport(dto: CreateSavedReportDto, user: UserPayload): Promise<{
+        createdBy: {
+            id: string;
+            firstName: string;
+            lastName: string;
+        };
+    } & {
+        organizationId: string;
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        createdById: string;
+        reportType: string;
+        filters: import("@prisma/client/runtime/library").JsonValue;
+        isShared: boolean;
+    }>;
+    deleteSavedReport(id: string, user: UserPayload): Promise<void>;
+    queueExport(body: {
+        type: string;
+    }, user: UserPayload): Promise<{
+        jobId: string | number;
+    }>;
+    getExportStatus(jobId: string): Promise<{
+        status: string;
+        csv?: string;
+        error?: string;
+    }>;
 }

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Role, OpportunityStatus, LeadStatus } from '@prisma/client';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, Role, OpportunityStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateSavedReportDto } from './dto/create-saved-report.dto';
 
 @Injectable()
 export class ReportsService {
@@ -247,5 +248,68 @@ export class ReportsService {
     }
 
     return 'No data available';
+  }
+
+  // ── Saved Reports ────────────────────────────────────────────────────────────
+
+  async getSavedReports(orgId: string, userId: string) {
+    return this.prisma.savedReport.findMany({
+      where: {
+        organizationId: orgId,
+        OR: [{ isShared: true }, { createdById: userId }],
+      },
+      include: {
+        createdBy: {
+          select: { id: true, firstName: true, lastName: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async createSavedReport(
+    dto: CreateSavedReportDto,
+    createdById: string,
+    orgId: string,
+  ) {
+    return this.prisma.savedReport.create({
+      data: {
+        organizationId: orgId,
+        createdById,
+        name: dto.name,
+        reportType: dto.reportType,
+        filters: (dto.filters ?? {}) as Prisma.InputJsonValue,
+        isShared: dto.isShared ?? false,
+      },
+      include: {
+        createdBy: {
+          select: { id: true, firstName: true, lastName: true },
+        },
+      },
+    });
+  }
+
+  async deleteSavedReport(
+    id: string,
+    userId: string,
+    orgId: string,
+    role: Role,
+  ): Promise<void> {
+    const report = await this.prisma.savedReport.findFirst({
+      where: { id, organizationId: orgId },
+    });
+
+    if (!report) {
+      throw new NotFoundException(`SavedReport ${id} not found`);
+    }
+
+    const isOwner = report.createdById === userId;
+    const isAdmin = role === Role.ADMIN || role === Role.SUPER_ADMIN;
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Only the creator or an admin can delete this saved report');
+    }
+
+    await this.prisma.savedReport.delete({ where: { id } });
   }
 }

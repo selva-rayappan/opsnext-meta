@@ -1,7 +1,9 @@
 {
-  "/(dashboard)/leads/page": "app/(dashboard)/leads/page.js",
-  "/(dashboard)/settings/users/page": "app/(dashboard)/settings/users/page.js",
-  "/(dashboard)/opportunities/page": "app/(dashboard)/opportunities/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
   "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
-  "/(dashboard)/settings/pipelines/page": "app/(dashboard)/settings/pipelines/page.js"
+  "/(dashboard)/activities/page": "app/(dashboard)/activities/page.js",
+  "/(dashboard)/opportunities/page": "app/(dashboard)/opportunities/page.js",
+  "/(dashboard)/settings/users/page": "app/(dashboard)/settings/users/page.js",
+  "/(dashboard)/settings/pipelines/page": "app/(dashboard)/settings/pipelines/page.js",
+  "/(dashboard)/reports/page": "app/(dashboard)/reports/page.js"
 }

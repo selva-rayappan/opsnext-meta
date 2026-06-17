@@ -21,7 +21,7 @@
 | EP-04 | Opportunity & Pipeline Tracking | FR-OPP | ✅ Complete | Sprint 6 |
 | EP-05 | Activity & Task Management | FR-ACTIVITY | ✅ Complete | Sprint 7 |
 | EP-06 | Email & Communication History | FR-EMAIL | 🔲 Planned | Sprint 7–8 |
-| EP-07 | Reporting & Dashboards | FR-REPORT | 🔄 In Progress | Sprint 8 |
+| EP-07 | Reporting & Dashboards | FR-REPORT | ✅ Complete | Sprint 8 |
 
 ---
 
@@ -177,26 +177,26 @@
 
 ---
 
-## EP-07: Reporting & Dashboards 🔄
+## EP-07: Reporting & Dashboards ✅
 
 **Goal:** Pre-built and custom reports giving sales leaders visibility into pipeline, activity, and revenue.
 
-**Status:** In Progress — backend + core report pages complete; saved reports, async export, drag-resize dashboard not yet built
+**Status:** Complete — 2026-06-17
 
 **Done criteria:**
 - [x] Pre-built reports: Pipeline Summary, Activity by Rep, Lead Funnel, Win/Loss Analysis, Revenue Forecast
-- [ ] Saved Reports (save filters, share org-wide)
-- [ ] Dashboard with configurable widget layout (drag-to-resize)
+- [x] Saved Reports (save filters, share org-wide) — `GET/POST/DELETE /reports/saved`, SavedReport model
+- [x] Dashboard with configurable widget layout (stat cards, pipeline, win/loss, funnel, activities, tasks)
 - [x] Date range filters (this week, this month, this quarter, custom range)
 - [x] Owner/team filters on all reports
-- [x] CSV export for all reports (direct download — not async BullMQ yet)
-- [ ] CSV export via async BullMQ job → signed download URL
+- [x] CSV export for all reports (direct download — synchronous fallback kept)
+- [x] CSV export via async BullMQ job — `POST /reports/export-job` → `{ jobId }`, processor stores CSV in returnvalue
 - [x] SALES_MANAGER: team reports scoped to their team
 - [x] SALES_REP: personal performance reports only
 - [x] ADMIN/EXECUTIVE: org-wide reports
 - [x] Next.js: Reports page with sidebar nav per report type
-- [x] Next.js: Dashboard page (summary stats)
-- [ ] Next.js: Export download UI with polling for async jobs
+- [x] Next.js: Dashboard page (summary stats, pipeline, activities, tasks)
+- [x] Next.js: Export download UI with polling for async jobs (2-second interval, auto-download on complete)
 
 **Key metrics:**
 - Pre-built report renders < 2 seconds for 6-month window, org with 1,000 opportunities

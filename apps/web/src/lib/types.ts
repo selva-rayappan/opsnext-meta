@@ -367,4 +367,20 @@ export interface RevenueForecastRow {
   expectedValue: number;
 }
 
+// ---------------------------------------------------------------------------
+// Saved Reports (EP-07)
+// ---------------------------------------------------------------------------
+
+export interface SavedReport {
+  id: string;
+  organizationId: string;
+  createdById: string;
+  name: string;
+  reportType: string; // 'pipeline-summary' | 'activity-by-rep' | 'lead-funnel' | 'win-loss' | 'revenue-forecast'
+  filters: Record<string, unknown>;
+  isShared: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: { id: string; firstName: string; lastName: string };
+}
 
